@@ -32,9 +32,10 @@ export default function WiderrufPage() {
               </p>
               <div className="bg-background-alt p-4 rounded-lg mt-4">
                 <p>
-                  [Kanzleiname]<br />
-                  [Adresse]<br />
-                  E-Mail: info@meta-datenschutzklage.de
+                  BEMK Rechtsanwälte Blazek Ellerbrock Malar Kronsbein PartGmbB<br />
+                  Artur-Ladebeck-Str. 8<br />
+                  33602 Bielefeld<br />
+                  E-Mail: info@rae-bemk.de
                 </p>
               </div>
               <p className="mt-4">
@@ -95,9 +96,10 @@ export default function WiderrufPage() {
               <div className="bg-background-alt p-6 rounded-lg mt-4 border border-border">
                 <p>An:</p>
                 <p className="mt-2">
-                  [Kanzleiname]<br />
-                  [Adresse]<br />
-                  E-Mail: info@meta-datenschutzklage.de
+                  BEMK Rechtsanwälte Blazek Ellerbrock Malar Kronsbein PartGmbB<br />
+                  Artur-Ladebeck-Str. 8<br />
+                  33602 Bielefeld<br />
+                  E-Mail: info@rae-bemk.de
                 </p>
                 <p className="mt-4">
                   Hiermit widerrufe(n) ich/wir (*) den von mir/uns (*) abgeschlossenen Vertrag 
