@@ -1,0 +1,9 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Shield -->
+  <path d="M24 4L6 10V22C6 33.05 13.68 43.22 24 46C34.32 43.22 42 33.05 42 22V10L24 4Z" fill="#1e3a5f" stroke="#1e3a5f" stroke-width="2" stroke-linejoin="round"/>
+  <!-- Inner Shield -->
+  <path d="M24 8L10 13V22C10 30.84 16.16 38.94 24 41.5C31.84 38.94 38 30.84 38 22V13L24 8Z" fill="#152a45"/>
+  <!-- Paragraph Symbol -->
+  <text x="24" y="30" text-anchor="middle" fill="#c9a227" font-size="20" font-weight="bold" font-family="DM Sans, sans-serif">§</text>
+</svg>
+

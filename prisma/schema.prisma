@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Mandate {
+  id                     String        @id @default(cuid())
+  vorname                String
+  nachname               String
+  email                  String
+  telefon                String?
+  adresse                String
+  plz                    String
+  wohnort                String
+  geburtsdatum           DateTime
+  instagramAccountDatum  DateTime?
+  facebookAccountDatum   DateTime?
+  versicherungsnummer    String
+  status                 MandateStatus @default(NEU)
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
+
+  @@map("mandates")
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  name         String?
+  createdAt    DateTime @default(now())
+
+  @@map("admin_users")
+}
+
+enum MandateStatus {
+  NEU
+  IN_BEARBEITUNG
+  ABGESCHLOSSEN
+  ABGELEHNT
+}

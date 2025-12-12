@@ -1,0 +1,59 @@
+import { z } from "zod";
+
+export const mandateFormSchema = z.object({
+  vorname: z
+    .string()
+    .min(2, "Vorname muss mindestens 2 Zeichen haben")
+    .max(50, "Vorname darf maximal 50 Zeichen haben"),
+  nachname: z
+    .string()
+    .min(2, "Nachname muss mindestens 2 Zeichen haben")
+    .max(50, "Nachname darf maximal 50 Zeichen haben"),
+  email: z.string().email("Bitte gib eine gültige E-Mail-Adresse ein"),
+  telefon: z.string().optional(),
+  adresse: z
+    .string()
+    .min(5, "Adresse muss mindestens 5 Zeichen haben")
+    .max(200, "Adresse darf maximal 200 Zeichen haben"),
+  plz: z
+    .string()
+    .regex(/^\d{5}$/, "PLZ muss 5 Ziffern haben"),
+  wohnort: z
+    .string()
+    .min(2, "Wohnort muss mindestens 2 Zeichen haben")
+    .max(100, "Wohnort darf maximal 100 Zeichen haben"),
+  geburtsdatum: z
+    .string()
+    .refine((val) => {
+      const date = new Date(val);
+      const now = new Date();
+      const age = now.getFullYear() - date.getFullYear();
+      return age >= 18;
+    }, "Du musst mindestens 18 Jahre alt sein"),
+  instagramAccountDatum: z.string().optional(),
+  facebookAccountDatum: z.string().optional(),
+  hatRechtschutz: z.boolean(),
+  versicherungsnummer: z.string().optional(),
+}).refine(
+  (data) => data.instagramAccountDatum || data.facebookAccountDatum,
+  {
+    message: "Mindestens ein Account-Datum (Instagram oder Facebook) muss angegeben werden",
+    path: ["instagramAccountDatum"],
+  }
+).refine(
+  (data) => !data.hatRechtschutz || (data.hatRechtschutz && data.versicherungsnummer && data.versicherungsnummer.length > 0),
+  {
+    message: "Versicherungsnummer ist erforderlich bei vorhandener Rechtschutzversicherung",
+    path: ["versicherungsnummer"],
+  }
+);
+
+export type MandateFormData = z.infer<typeof mandateFormSchema>;
+
+export const loginSchema = z.object({
+  email: z.string().email("Bitte gib eine gültige E-Mail-Adresse ein"),
+  password: z.string().min(8, "Passwort muss mindestens 8 Zeichen haben"),
+});
+
+export type LoginFormData = z.infer<typeof loginSchema>;
+
