@@ -39,6 +39,12 @@ export default async function AdminDashboardPage() {
             </div>
             <div className="flex items-center gap-4">
               <span className="text-white/70 text-sm">{session.user?.email}</span>
+              <Link
+                href="/admin/passwort"
+                className="text-white/70 hover:text-white text-sm transition-colors"
+              >
+                Passwort ändern
+              </Link>
               <AdminLogoutButton />
             </div>
           </div>
