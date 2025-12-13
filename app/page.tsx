@@ -284,7 +284,7 @@ export default function HomePage() {
             />
             <FAQItem
               question="Wie hoch ist der Schadensersatz?"
-              answer="Die Gerichte sprechen typischerweise Schadensersatz zwischen 300€ und 1.000€ zu. Die genaue Höhe hängt vom Einzelfall ab, insbesondere davon, wie lange Du die Plattformen genutzt hast."
+              answer="Als Erwachsenem stehen Dir bis zu 10.000,- Euro, als minderjähriger Person 5.000,- Euro zu."
             />
             <FAQItem
               question="Wie lange dauert das Verfahren?"
