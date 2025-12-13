@@ -24,7 +24,7 @@ export default function AGBPage() {
               </h2>
               <p>
                 (1) Diese Allgemeinen Geschäftsbedingungen gelten für alle Mandatsverträge 
-                zwischen [Kanzleiname] (nachfolgend &quot;Kanzlei&quot;) und dem Mandanten im 
+                zwischen BEMK Rechtsanwälte Blazek Ellerbrock Malar Kronsbein PartGmbB (nachfolgend &quot;Kanzlei&quot;) und dem Mandanten im 
                 Zusammenhang mit der Durchsetzung von Datenschutzansprüchen gegen META 
                 Platforms, Inc. und verbundene Unternehmen.
               </p>
