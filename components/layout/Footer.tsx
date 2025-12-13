@@ -124,12 +124,9 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-center gap-4">
           <p className="text-white/50 text-sm">
             © {currentYear} META Datenschutzklage. Alle Rechte vorbehalten.
-          </p>
-          <p className="text-white/50 text-sm">
-            Domain: meta-datenschutzklage.de
           </p>
         </div>
       </div>
