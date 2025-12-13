@@ -13,6 +13,7 @@ export default function FormularPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [agbAccepted, setAgbAccepted] = useState(false);
   const totalSteps = 3;
 
   const {
@@ -302,19 +303,27 @@ export default function FormularPage() {
                     )}
                   </div>
 
-                  {/* Datenschutz Hinweis */}
-                  <div className="text-sm text-text-muted">
-                    <p>
-                      Mit dem Absenden erklärst Du Dich mit unseren{" "}
-                      <Link href="/agb" className="text-accent hover:underline">
-                        AGB
-                      </Link>{" "}
-                      und der{" "}
-                      <Link href="/datenschutz" className="text-accent hover:underline">
-                        Datenschutzerklärung
-                      </Link>{" "}
-                      einverstanden.
-                    </p>
+                  {/* AGB & Datenschutz Checkbox */}
+                  <div className="mt-6">
+                    <label className="flex items-start gap-3 cursor-pointer group">
+                      <input
+                        type="checkbox"
+                        checked={agbAccepted}
+                        onChange={(e) => setAgbAccepted(e.target.checked)}
+                        className="w-5 h-5 mt-0.5 text-accent border-border rounded focus:ring-accent"
+                      />
+                      <span className="text-sm text-text-muted group-hover:text-text transition-colors">
+                        Ich habe die{" "}
+                        <Link href="/agb" className="text-accent hover:underline" target="_blank">
+                          AGB
+                        </Link>{" "}
+                        und die{" "}
+                        <Link href="/datenschutz" className="text-accent hover:underline" target="_blank">
+                          Datenschutzerklärung
+                        </Link>{" "}
+                        gelesen und erkläre mich damit einverstanden.
+                      </span>
+                    </label>
                   </div>
                 </div>
               )}
@@ -352,6 +361,8 @@ export default function FormularPage() {
                     type="submit"
                     variant="primary"
                     isLoading={isSubmitting}
+                    disabled={!agbAccepted}
+                    className={!agbAccepted ? "opacity-50 cursor-not-allowed" : ""}
                   >
                     {hatRechtschutz ? "Mandat erteilen" : "Weiter zu meta-klage.de"}
                     <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
