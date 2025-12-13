@@ -238,7 +238,7 @@ export default function HomePage() {
                 </div>
                 <h3 className="text-xl font-semibold text-primary mb-3">Schadensersatz erhalten</h3>
                 <p className="text-text-muted">
-                  Bei Erfolg erhältst Du Deinen Schadensersatz von bis zu 1.000€ – komplett für Dich.
+                  Bei Erfolg erhältst Du Deinen Schadensersatz von bis zu 10.000€ – komplett für Dich.
                 </p>
               </div>
             </div>
