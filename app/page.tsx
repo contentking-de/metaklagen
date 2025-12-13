@@ -263,7 +263,7 @@ export default function HomePage() {
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-                Hintergrund
+                Hintergründe zur Meta Datenschutzklage
               </h2>
             </div>
 
