@@ -36,7 +36,7 @@ export default function HomePage() {
             <p className="text-lg md:text-xl text-text-muted max-w-2xl mx-auto mb-10 animate-fade-in stagger-2">
               META (Facebook & Instagram) hat gegen den Datenschutz verstoßen. 
               Mit Deiner Rechtschutzversicherung vertreten wir Dich <strong>kostenlos</strong> und 
-              holen Dir Deinen Schadensersatz.
+              holen Dir Deinen Schadensersatz, sobald der BGH ein neues Grundsatzurteil dazu verfügt.
             </p>
             
             {/* CTA Buttons */}
