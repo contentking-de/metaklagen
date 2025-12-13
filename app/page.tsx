@@ -17,8 +17,8 @@ export default function HomePage() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 rounded-full text-accent font-medium text-sm mb-6 animate-fade-in">
-              <span className="w-2 h-2 bg-accent rounded-full animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-success/10 rounded-full text-success font-medium text-sm mb-6 animate-fade-in">
+              <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
               Jetzt Ansprüche sichern – Kostenlos mit Rechtschutz
             </div>
             
