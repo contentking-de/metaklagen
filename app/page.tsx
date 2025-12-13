@@ -82,7 +82,7 @@ export default function HomePage() {
       </section>
 
       {/* Vorteile Section */}
-      <section id="vorteile" className="py-20 bg-background-alt">
+      <section id="vorteile" className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
@@ -253,6 +253,95 @@ export default function HomePage() {
                 </svg>
               </Button>
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Hintergrund Section */}
+      <section id="hintergrund" className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
+                Hintergrund
+              </h2>
+            </div>
+
+            <div className="space-y-6 text-text-muted text-lg leading-relaxed">
+              <p>
+                Der Technologiekonzern Meta, Betreiber der Plattformen Facebook und Instagram, 
+                erfasst mithilfe sogenannter „Meta Business Tools" in großem Umfang Daten über 
+                das Online-Verhalten seiner Nutzer.
+              </p>
+              
+              <p>
+                Auf zahlreichen Webseiten und in Apps werden Aktivitäten der Nutzer aufgezeichnet, 
+                gespeichert und wirtschaftlich verwertet. Auf diese Weise erzielt Meta erhebliche Einnahmen.
+              </p>
+              
+              <div className="bg-white rounded-xl p-6 border-l-4 border-accent shadow-sm">
+                <p className="text-primary font-semibold text-xl">
+                  In Deutschland sind von dieser Datenerfassung schätzungsweise rund{" "}
+                  <span className="text-accent">50 Millionen Menschen</span> betroffen.
+                </p>
+              </div>
+              
+              <p>
+                Nach Auffassung von Datenschutzexperten verstößt diese Praxis gegen die Vorgaben 
+                der europäischen Datenschutz-Grundverordnung (DSGVO).
+              </p>
+              
+              <div className="bg-success/10 rounded-xl p-6 border border-success/20">
+                <p className="text-primary font-medium">
+                  Nutzerinnen und Nutzer von Facebook oder Instagram haben die Möglichkeit, 
+                  sich <strong className="text-success">kostenfrei und ohne finanzielles Risiko</strong> an der Klage zu beteiligen 
+                  und mit Deckung Rechtsschutzversicherung auch als Einzelkläger aufzutreten. 
+                  Wir übernehmen im Einzelfall jeweils die Prüfung und Abwicklung mit dem Versicherer.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Erfolgschancen Section */}
+      <section id="erfolgschancen" className="py-20 bg-background-alt">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
+                Erfolgschancen
+              </h2>
+            </div>
+
+            <div className="space-y-6 text-text-muted text-lg leading-relaxed">
+              <p>
+                In zahlreichen Individualverfahren wurden Ansprüche gegen Meta bereits gerichtlich bestätigt. 
+                Zuletzt erregte ein Urteil des Landgerichts Leipzig vom Juli 2025 erhebliche mediale Aufmerksamkeit.
+              </p>
+              
+              <div className="bg-white rounded-xl p-6 border-l-4 border-success shadow-sm">
+                <p className="text-primary font-semibold text-xl">
+                  Mehrere Landgerichte, darunter Berlin, Hamburg, München, Köln, Düsseldorf, Stuttgart und Leipzig, 
+                  sowie Kammern von über 70 weiteren Landgerichten haben in insgesamt{" "}
+                  <span className="text-success">mehr als 900 aktuellen Entscheidungen</span>{" "}
+                  die Rechtswidrigkeit der Datenverarbeitung durch Meta festgestellt.
+                </p>
+              </div>
+              
+              <p>
+                Die Entscheidungen sind bislang nicht rechtskräftig. Meta bestreitet die geltend gemachten Ansprüche. 
+                Eine abschließende Klärung der Rechtsmäßigkeit der Datenverarbeitung sowie der Höhe etwaiger 
+                Entschädigungen wird voraussichtlich durch den Bundesgerichtshof in den Jahren 2026 oder 2027 erfolgen.
+              </p>
+              
+              <div className="bg-accent/10 rounded-xl p-6 border border-accent/20">
+                <p className="text-primary font-medium">
+                  <strong>Wichtig:</strong> Die Rechtswirkung eines Urteils in der Verbandsklage erstreckt sich 
+                  ausschließlich auf angemeldete Verbraucher.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>

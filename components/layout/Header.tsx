@@ -31,6 +31,18 @@ export default function Header() {
               Ablauf
             </Link>
             <Link
+              href="/#hintergrund"
+              className="text-text-muted hover:text-primary transition-colors font-medium"
+            >
+              Hintergrund
+            </Link>
+            <Link
+              href="/#erfolgschancen"
+              className="text-text-muted hover:text-primary transition-colors font-medium"
+            >
+              Erfolgschancen
+            </Link>
+            <Link
               href="/#faq"
               className="text-text-muted hover:text-primary transition-colors font-medium"
             >
@@ -91,6 +103,20 @@ export default function Header() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Ablauf
+              </Link>
+              <Link
+                href="/#hintergrund"
+                className="text-text-muted hover:text-primary transition-colors font-medium py-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Hintergrund
+              </Link>
+              <Link
+                href="/#erfolgschancen"
+                className="text-text-muted hover:text-primary transition-colors font-medium py-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Erfolgschancen
               </Link>
               <Link
                 href="/#faq"
