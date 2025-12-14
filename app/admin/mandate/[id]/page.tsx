@@ -158,15 +158,37 @@ export default async function MandateDetailPage({ params }: PageProps) {
               <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
-              Versicherung
+              Rechtschutzversicherung
             </h2>
             <dl className="space-y-3">
               <div>
+                <dt className="text-sm text-text-muted">Versicherer</dt>
+                <dd className="font-medium">{mandate.versicherer || "Nicht angegeben"}</dd>
+              </div>
+              <div>
                 <dt className="text-sm text-text-muted">Versicherungsnummer</dt>
                 <dd className="font-medium font-mono bg-background-alt px-3 py-2 rounded">
-                  {mandate.versicherungsnummer}
+                  {mandate.versicherungsnummer || "Nicht angegeben"}
                 </dd>
               </div>
+              <div>
+                <dt className="text-sm text-text-muted">Abschlussdatum</dt>
+                <dd className="font-medium">
+                  {mandate.versicherungsAbschlussdatum
+                    ? mandate.versicherungsAbschlussdatum.toLocaleDateString("de-DE")
+                    : "Nicht angegeben"}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-sm text-text-muted">Versicherungsnehmer</dt>
+                <dd className="font-medium">{mandate.versicherungsnehmer || "Nicht angegeben"}</dd>
+              </div>
+              {mandate.versicherungsnehmerVerhaeltnis && (
+                <div>
+                  <dt className="text-sm text-text-muted">Verhältnis zum Versicherungsnehmer</dt>
+                  <dd className="font-medium">{mandate.versicherungsnehmerVerhaeltnis}</dd>
+                </div>
+              )}
             </dl>
           </Card>
         </div>
