@@ -314,15 +314,6 @@ export default function FormularPage() {
                           {...register("versicherungsAbschlussdatum")}
                           error={errors.versicherungsAbschlussdatum?.message}
                         />
-                        <Input
-                          label="Versicherungsnehmer"
-                          placeholder="Vor- und Nachname des Versicherungsnehmers"
-                          required
-                          {...register("versicherungsnehmer")}
-                          error={errors.versicherungsnehmer?.message}
-                          hint="Die Person, auf die die Versicherung läuft"
-                        />
-                        
                         <div className="mt-4">
                           <label className="flex items-center gap-3 cursor-pointer group">
                             <input
@@ -337,7 +328,15 @@ export default function FormularPage() {
                         </div>
 
                         {watch("versicherungsnehmerAbweichend") && (
-                          <div className="animate-fade-in">
+                          <div className="space-y-4 animate-fade-in">
+                            <Input
+                              label="Name des Versicherungsnehmers"
+                              placeholder="Vor- und Nachname des Versicherungsnehmers"
+                              required
+                              {...register("versicherungsnehmer")}
+                              error={errors.versicherungsnehmer?.message}
+                              hint="Die Person, auf die die Versicherung läuft"
+                            />
                             <Input
                               label="Verhältnis zum Versicherungsnehmer"
                               placeholder="z.B. Ehegatte, Kind, Lebenspartner"

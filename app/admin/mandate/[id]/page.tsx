@@ -181,9 +181,13 @@ export default async function MandateDetailPage({ params }: PageProps) {
               </div>
               <div>
                 <dt className="text-sm text-text-muted">Versicherungsnehmer</dt>
-                <dd className="font-medium">{mandate.versicherungsnehmer || "Nicht angegeben"}</dd>
+                <dd className="font-medium">
+                  {mandate.versicherungsnehmer 
+                    ? mandate.versicherungsnehmer 
+                    : <span className="text-success">Selbst (Antragsteller)</span>}
+                </dd>
               </div>
-              {mandate.versicherungsnehmerVerhaeltnis && (
+              {mandate.versicherungsnehmer && mandate.versicherungsnehmerVerhaeltnis && (
                 <div>
                   <dt className="text-sm text-text-muted">Verhältnis zum Versicherungsnehmer</dt>
                   <dd className="font-medium">{mandate.versicherungsnehmerVerhaeltnis}</dd>

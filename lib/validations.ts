@@ -70,9 +70,9 @@ export const mandateFormSchema = z.object({
     path: ["versicherungsAbschlussdatum"],
   }
 ).refine(
-  (data) => !data.hatRechtschutz || (data.hatRechtschutz && data.versicherungsnehmer && data.versicherungsnehmer.length > 0),
+  (data) => !data.versicherungsnehmerAbweichend || (data.versicherungsnehmerAbweichend && data.versicherungsnehmer && data.versicherungsnehmer.length > 0),
   {
-    message: "Versicherungsnehmer ist erforderlich bei vorhandener Rechtschutzversicherung",
+    message: "Bitte gib den Namen des Versicherungsnehmers an",
     path: ["versicherungsnehmer"],
   }
 ).refine(

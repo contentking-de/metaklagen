@@ -366,11 +366,11 @@ export default function HomePage() {
             />
             <FAQItem
               question="Was kostet mich die Klage?"
-              answer="Mit einer Rechtschutzversicherung ist die Klage für Dich komplett kostenlos. Alle Anwalts- und Gerichtskosten werden von Deiner Versicherung übernommen. Den erhaltenen Schadensersatz behältst Du zu 100%."
+              answer="Mit einer Rechtschutzversicherung ist die Klage für Dich ohne Kostenrisiko. Die Anwalts- und Gerichtskosten werden von Deiner Versicherung übernommen. Den erhaltenen Schadensersatz behältst Du zu 100%."
             />
             <FAQItem
               question="Wie hoch ist der Schadensersatz?"
-              answer="Als Erwachsenem stehen Dir bis zu 5.000,- Euro, als minderjähriger Person 10.000,- Euro zu."
+              answer="Als Erwachsenem stehen Dir bis zu 5.000,- Euro, als minderjähriger Person bis zu 10.000,- Euro zu."
             />
             <FAQItem
               question="Wie lange dauert das Verfahren?"
