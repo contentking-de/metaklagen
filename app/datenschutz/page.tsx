@@ -99,7 +99,11 @@ export default function DatenschutzPage() {
                 <li>Adresse (Straße, PLZ, Ort)</li>
                 <li>Geburtsdatum</li>
                 <li>Datum der Account-Eröffnung (Instagram/Facebook)</li>
-                <li>Versicherungsnummer der Rechtschutzversicherung</li>
+                <li>Versicherer</li>
+                <li>Versicherungsnummer</li>
+                <li>Abschlussdatum der Versicherung</li>
+                <li>Versicherungsnehmer</li>
+                <li>Falls Antragsteller und Versicherungsnehmer voneinander abweichen: Verhältnis zwischen Antragsteller und Versicherungsnehmer (z.B. Ehegatte)</li>
               </ul>
               <p className="mt-4">
                 Die Verarbeitung dieser Daten erfolgt auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO, 

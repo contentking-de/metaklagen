@@ -24,9 +24,6 @@ export default function FormularPage() {
     trigger,
   } = useForm<MandateFormData>({
     resolver: zodResolver(mandateFormSchema),
-    defaultValues: {
-      hatRechtschutz: true,
-    },
   });
 
   const hatRechtschutz = watch("hatRechtschutz");
@@ -280,8 +277,19 @@ export default function FormularPage() {
                       </label>
                     </div>
 
+                    {errors.hatRechtschutz && (
+                      <p className="mt-2 text-sm text-error">{errors.hatRechtschutz.message}</p>
+                    )}
+
                     {hatRechtschutz && (
-                      <div className="mt-6 animate-fade-in">
+                      <div className="mt-6 space-y-4 animate-fade-in">
+                        <Input
+                          label="Versicherer"
+                          placeholder="z.B. ARAG, Allianz, HUK-Coburg"
+                          required
+                          {...register("versicherer")}
+                          error={errors.versicherer?.message}
+                        />
                         <Input
                           label="Versicherungsnummer"
                           placeholder="z.B. RSV-123456789"
@@ -290,6 +298,47 @@ export default function FormularPage() {
                           error={errors.versicherungsnummer?.message}
                           hint="Findest Du auf Deiner Versicherungspolice"
                         />
+                        <Input
+                          label="Abschlussdatum der Versicherung"
+                          type="date"
+                          required
+                          {...register("versicherungsAbschlussdatum")}
+                          error={errors.versicherungsAbschlussdatum?.message}
+                        />
+                        <Input
+                          label="Versicherungsnehmer"
+                          placeholder="Vor- und Nachname des Versicherungsnehmers"
+                          required
+                          {...register("versicherungsnehmer")}
+                          error={errors.versicherungsnehmer?.message}
+                          hint="Die Person, auf die die Versicherung läuft"
+                        />
+                        
+                        <div className="mt-4">
+                          <label className="flex items-center gap-3 cursor-pointer group">
+                            <input
+                              type="checkbox"
+                              {...register("versicherungsnehmerAbweichend")}
+                              className="w-5 h-5 text-accent border-border rounded focus:ring-accent"
+                            />
+                            <span className="text-sm text-text group-hover:text-primary transition-colors">
+                              Ich bin nicht selbst Versicherungsnehmer
+                            </span>
+                          </label>
+                        </div>
+
+                        {watch("versicherungsnehmerAbweichend") && (
+                          <div className="animate-fade-in">
+                            <Input
+                              label="Verhältnis zum Versicherungsnehmer"
+                              placeholder="z.B. Ehegatte, Kind, Lebenspartner"
+                              required
+                              {...register("versicherungsnehmerVerhaeltnis")}
+                              error={errors.versicherungsnehmerVerhaeltnis?.message}
+                              hint="In welchem Verhältnis stehst Du zum Versicherungsnehmer?"
+                            />
+                          </div>
+                        )}
                       </div>
                     )}
 
@@ -364,7 +413,7 @@ export default function FormularPage() {
                     disabled={!agbAccepted}
                     className={!agbAccepted ? "opacity-50 cursor-not-allowed" : ""}
                   >
-                    {hatRechtschutz ? "Mandat erteilen" : "Weiter zu meta-klage.de"}
+                    {hatRechtschutz === false ? "Weiter zu meta-klage.de" : "Mandat erteilen"}
                     <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>

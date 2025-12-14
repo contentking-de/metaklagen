@@ -32,8 +32,13 @@ export const mandateFormSchema = z.object({
     }, "Du musst mindestens 18 Jahre alt sein"),
   instagramAccountDatum: z.string().optional(),
   facebookAccountDatum: z.string().optional(),
-  hatRechtschutz: z.boolean(),
+  hatRechtschutz: z.boolean().optional(),
+  versicherer: z.string().optional(),
   versicherungsnummer: z.string().optional(),
+  versicherungsAbschlussdatum: z.string().optional(),
+  versicherungsnehmer: z.string().optional(),
+  versicherungsnehmerAbweichend: z.boolean().optional(),
+  versicherungsnehmerVerhaeltnis: z.string().optional(),
 }).refine(
   (data) => data.instagramAccountDatum || data.facebookAccountDatum,
   {
@@ -41,10 +46,40 @@ export const mandateFormSchema = z.object({
     path: ["instagramAccountDatum"],
   }
 ).refine(
+  (data) => data.hatRechtschutz !== undefined,
+  {
+    message: "Bitte wähle aus, ob Du eine Rechtschutzversicherung hast",
+    path: ["hatRechtschutz"],
+  }
+).refine(
+  (data) => !data.hatRechtschutz || (data.hatRechtschutz && data.versicherer && data.versicherer.length > 0),
+  {
+    message: "Versicherer ist erforderlich bei vorhandener Rechtschutzversicherung",
+    path: ["versicherer"],
+  }
+).refine(
   (data) => !data.hatRechtschutz || (data.hatRechtschutz && data.versicherungsnummer && data.versicherungsnummer.length > 0),
   {
     message: "Versicherungsnummer ist erforderlich bei vorhandener Rechtschutzversicherung",
     path: ["versicherungsnummer"],
+  }
+).refine(
+  (data) => !data.hatRechtschutz || (data.hatRechtschutz && data.versicherungsAbschlussdatum),
+  {
+    message: "Abschlussdatum ist erforderlich bei vorhandener Rechtschutzversicherung",
+    path: ["versicherungsAbschlussdatum"],
+  }
+).refine(
+  (data) => !data.hatRechtschutz || (data.hatRechtschutz && data.versicherungsnehmer && data.versicherungsnehmer.length > 0),
+  {
+    message: "Versicherungsnehmer ist erforderlich bei vorhandener Rechtschutzversicherung",
+    path: ["versicherungsnehmer"],
+  }
+).refine(
+  (data) => !data.versicherungsnehmerAbweichend || (data.versicherungsnehmerAbweichend && data.versicherungsnehmerVerhaeltnis && data.versicherungsnehmerVerhaeltnis.length > 0),
+  {
+    message: "Bitte gib Dein Verhältnis zum Versicherungsnehmer an",
+    path: ["versicherungsnehmerVerhaeltnis"],
   }
 );
 

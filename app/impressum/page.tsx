@@ -22,16 +22,16 @@ export default function ImpressumPage() {
               </h2>
               <p>
                 BEMK Rechtsanwälte Blazek Ellerbrock Malar Kronsbein PartGmbB<br />
-                Artur-Ladebeck-Str. 8<br />
-                33602 Bielefeld
+                Florianweg 1<br />
+                88677 Markdorf
               </p>
 
               <h2 className="text-xl font-semibold text-primary mt-8 mb-4">
                 Kontakt
               </h2>
               <p>
-                Telefon: +49 (0) 521 977 940-0<br />
-                Telefax: +49 (0) 521 977 940-10<br />
+                Telefon: 07544 934910<br />
+                Telefax: 07544 9349110<br />
                 E-Mail: info@rae-bemk.de
               </p>
 

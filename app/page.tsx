@@ -35,8 +35,7 @@ export default function HomePage() {
             {/* Subheadline */}
             <p className="text-lg md:text-xl text-text-muted max-w-2xl mx-auto mb-10 animate-fade-in stagger-2">
               META (Facebook & Instagram) hat gegen den Datenschutz verstoßen. 
-              Mit Deiner Rechtschutzversicherung vertreten wir Dich <strong>kostenlos</strong> und 
-              holen Dir Deinen Schadensersatz, sobald der BGH ein neues Grundsatzurteil dazu verfügt.
+              Wenn Du über eine Rechtsschutzversicherung verfügst, machen wir für Dich gegenüber Meta Schadenersatzansprüche geltend, ohne dass Du ein eigenes Kostenrisiko trägst.
             </p>
             
             {/* CTA Buttons */}
@@ -117,8 +116,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-xl font-semibold text-primary mb-3">Erfahrene Anwälte</h3>
               <p className="text-text-muted">
-                Unser spezialisiertes Team hat bereits hunderte Fälle gegen META erfolgreich vertreten 
-                und kennt alle rechtlichen Feinheiten.
+                Unser spezialisiertes Team verfügt über Erfahrung von mehr als 20 Jahren hat bereits mehrere 1000 Verbraucherklagen erfolgreich geführt.
               </p>
             </Card>
 
@@ -131,8 +129,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-xl font-semibold text-primary mb-3">Schnell & Digital</h3>
               <p className="text-text-muted">
-                Der gesamte Prozess läuft digital ab. In nur 5 Minuten hast Du Dein Mandat erteilt – 
-                ohne Papierkram oder Termine.
+                Die Vollmachtsunterlagen erhältst Du schnell und einfach zusammen mit der Bestätigungsmail.
               </p>
             </Card>
 
@@ -174,7 +171,7 @@ export default function HomePage() {
               <h3 className="text-xl font-semibold text-primary mb-3">Hohe Erfolgsquote</h3>
               <p className="text-text-muted">
                 Durch unsere Erfahrung und Spezialisierung erreichen wir eine überdurchschnittlich 
-                hohe Erfolgsquote bei Datenschutzklagen.
+                hohe Erfolgsquote bei Verbraucherschutzklagen.
               </p>
             </Card>
           </div>
@@ -295,7 +292,7 @@ export default function HomePage() {
                 <p className="text-primary font-medium">
                   Nutzerinnen und Nutzer von Facebook oder Instagram haben die Möglichkeit, 
                   sich <strong className="text-success">kostenfrei und ohne finanzielles Risiko</strong> an der Klage zu beteiligen 
-                  und mit Deckung Rechtsschutzversicherung auch als Einzelkläger aufzutreten. 
+                  und mit Deckung der Rechtsschutzversicherung auch als Einzelkläger aufzutreten. 
                   Wir übernehmen im Einzelfall jeweils die Prüfung und Abwicklung mit dem Versicherer.
                 </p>
               </div>
@@ -373,7 +370,7 @@ export default function HomePage() {
             />
             <FAQItem
               question="Wie hoch ist der Schadensersatz?"
-              answer="Als Erwachsenem stehen Dir bis zu 10.000,- Euro, als minderjähriger Person 5.000,- Euro zu."
+              answer="Als Erwachsenem stehen Dir bis zu 5.000,- Euro, als minderjähriger Person 10.000,- Euro zu."
             />
             <FAQItem
               question="Wie lange dauert das Verfahren?"
@@ -381,7 +378,7 @@ export default function HomePage() {
             />
             <FAQItem
               question="Was passiert ohne Rechtschutzversicherung?"
-              answer="Ohne Rechtschutzversicherung können wir Dich leider nicht vertreten, da dann ein Kostenrisiko für Dich bestehen würde. Du kannst aber unter meta-klage.de alternative Möglichkeiten prüfen."
+              answer="Selbstverständlich kann ein Verfahren gegen Meta auch ohne Rechtsschutzversicherung geführt werden. Hiervon raten wir aber aufgrund des bestehenden Prozess- und Kostenrisikos grundsätzlich ab. Du kannst Dich aber unter meta-klage.de einer Verbandsklage gegen den Metakonzern abschließen."
             />
           </div>
         </div>

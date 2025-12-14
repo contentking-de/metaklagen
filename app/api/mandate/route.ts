@@ -35,7 +35,13 @@ export async function POST(request: Request) {
         facebookAccountDatum: validatedData.facebookAccountDatum
           ? new Date(validatedData.facebookAccountDatum)
           : null,
-        versicherungsnummer: validatedData.versicherungsnummer!,
+        versicherer: validatedData.versicherer || null,
+        versicherungsnummer: validatedData.versicherungsnummer || null,
+        versicherungsAbschlussdatum: validatedData.versicherungsAbschlussdatum
+          ? new Date(validatedData.versicherungsAbschlussdatum)
+          : null,
+        versicherungsnehmer: validatedData.versicherungsnehmer || null,
+        versicherungsnehmerVerhaeltnis: validatedData.versicherungsnehmerVerhaeltnis || null,
         status: "NEU",
       },
     });
@@ -45,7 +51,13 @@ export async function POST(request: Request) {
       vorname: mandate.vorname,
       nachname: mandate.nachname,
       email: mandate.email,
-      versicherungsnummer: mandate.versicherungsnummer,
+      versicherer: mandate.versicherer || undefined,
+      versicherungsnummer: mandate.versicherungsnummer || undefined,
+      versicherungsAbschlussdatum: mandate.versicherungsAbschlussdatum
+        ? mandate.versicherungsAbschlussdatum.toLocaleDateString("de-DE")
+        : undefined,
+      versicherungsnehmer: mandate.versicherungsnehmer || undefined,
+      versicherungsnehmerVerhaeltnis: mandate.versicherungsnehmerVerhaeltnis || undefined,
     };
 
     // Bestätigungs-E-Mail an Nutzer

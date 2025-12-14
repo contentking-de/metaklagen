@@ -6,7 +6,11 @@ interface MandateEmailData {
   vorname: string;
   nachname: string;
   email: string;
-  versicherungsnummer: string;
+  versicherer?: string;
+  versicherungsnummer?: string;
+  versicherungsAbschlussdatum?: string;
+  versicherungsnehmer?: string;
+  versicherungsnehmerVerhaeltnis?: string;
 }
 
 export async function sendConfirmationEmail(data: MandateEmailData) {
@@ -40,7 +44,7 @@ export async function sendConfirmationEmail(data: MandateEmailData) {
               <h1>Vielen Dank für Ihre Mandatserteilung</h1>
               <p>Sehr geehrte/r ${data.vorname} ${data.nachname},</p>
               <p>wir haben Ihre Mandatserteilung erfolgreich erhalten und werden uns zeitnah bei Ihnen melden.</p>
-              <p><strong>Ihre Versicherungsnummer:</strong> ${data.versicherungsnummer}</p>
+              ${data.versicherungsnummer ? `<p><strong>Ihre Versicherungsnummer:</strong> ${data.versicherungsnummer}</p>` : ""}
               <p>Unser Team wird sich in den nächsten Werktagen mit Ihnen in Verbindung setzen, um die weiteren Schritte zu besprechen.</p>
               <p>Bei Fragen stehen wir Ihnen gerne zur Verfügung.</p>
               <p>Mit freundlichen Grüßen,<br>Ihr Team von META Datenschutzklage</p>
@@ -100,7 +104,11 @@ export async function sendKanzleiNotification(data: MandateEmailData & {
               <tr><td>Geburtsdatum:</td><td>${data.geburtsdatum}</td></tr>
               <tr><td>Instagram Account seit:</td><td>${data.instagramAccountDatum || "Nicht angegeben"}</td></tr>
               <tr><td>Facebook Account seit:</td><td>${data.facebookAccountDatum || "Nicht angegeben"}</td></tr>
-              <tr><td>Versicherungsnummer:</td><td>${data.versicherungsnummer}</td></tr>
+              <tr><td>Versicherer:</td><td>${data.versicherer || "Nicht angegeben"}</td></tr>
+              <tr><td>Versicherungsnummer:</td><td>${data.versicherungsnummer || "Nicht angegeben"}</td></tr>
+              <tr><td>Versicherungs-Abschlussdatum:</td><td>${data.versicherungsAbschlussdatum || "Nicht angegeben"}</td></tr>
+              <tr><td>Versicherungsnehmer:</td><td>${data.versicherungsnehmer || "Nicht angegeben"}</td></tr>
+              ${data.versicherungsnehmerVerhaeltnis ? `<tr><td>Verhältnis zum VN:</td><td>${data.versicherungsnehmerVerhaeltnis}</td></tr>` : ""}
             </table>
           </div>
         </body>

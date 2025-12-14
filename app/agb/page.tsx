@@ -37,8 +37,8 @@ export default function AGBPage() {
                 § 2 Vertragsschluss
               </h2>
               <p>
-                (1) Der Mandatsvertrag kommt durch die Übermittlung des ausgefüllten 
-                Mandatsformulars auf dieser Website und die Annahme durch die Kanzlei zustande.
+                (1) Der Mandatsvertrag kommt mit Unterzeichnung einer Vollmachtsurkunde und der 
+                Bestätigung der Mandatsübernahme durch die Kanzlei zustande.
               </p>
               <p className="mt-4">
                 (2) Die Kanzlei behält sich vor, Mandate ohne Angabe von Gründen abzulehnen.
@@ -71,15 +71,11 @@ export default function AGBPage() {
                 § 4 Voraussetzungen
               </h2>
               <p>
-                (1) Voraussetzung für die Mandatsübernahme ist das Vorliegen einer 
-                Rechtschutzversicherung, die die Kosten des Verfahrens deckt.
-              </p>
-              <p className="mt-4">
-                (2) Der Mandant muss zum Zeitpunkt der Mandatserteilung mindestens 18 Jahre 
+                (1) Der Mandant muss zum Zeitpunkt der Mandatserteilung mindestens 18 Jahre 
                 alt sein und seinen Wohnsitz in Deutschland haben.
               </p>
               <p className="mt-4">
-                (3) Der Mandant muss ein Facebook- und/oder Instagram-Konto besitzen oder 
+                (2) Der Mandant muss ein Facebook- und/oder Instagram-Konto besitzen oder 
                 besessen haben.
               </p>
 
@@ -90,11 +86,7 @@ export default function AGBPage() {
                 (1) Die Vergütung der Kanzlei richtet sich nach dem Rechtsanwaltsvergütungsgesetz (RVG).
               </p>
               <p className="mt-4">
-                (2) Bei Vorliegen einer Rechtschutzversicherung werden die Kosten von dieser 
-                übernommen. Der Mandant trägt in diesem Fall kein Kostenrisiko.
-              </p>
-              <p className="mt-4">
-                (3) Ein etwaig erstrittener Schadensersatz verbleibt vollständig beim Mandanten.
+                (2) Ein etwaig erstrittener Schadensersatz verbleibt vollständig beim Mandanten.
               </p>
 
               <h2 className="text-xl font-semibold text-primary mt-8 mb-4">
