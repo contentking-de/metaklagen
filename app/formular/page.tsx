@@ -15,6 +15,9 @@ export default function FormularPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [agbAccepted, setAgbAccepted] = useState(false);
   const totalSteps = 3;
+  
+  // Heutiges Datum als Maximum für Datumsfelder (Format: YYYY-MM-DD)
+  const today = new Date().toISOString().split("T")[0];
 
   const {
     register,
@@ -198,6 +201,7 @@ export default function FormularPage() {
                     label="Geburtsdatum"
                     type="date"
                     required
+                    max={today}
                     {...register("geburtsdatum")}
                     error={errors.geburtsdatum?.message}
                     hint="Du musst mindestens 18 Jahre alt sein"
@@ -220,16 +224,20 @@ export default function FormularPage() {
                     <Input
                       label="Instagram-Account seit"
                       type="date"
+                      min="2010-10-06"
+                      max={today}
                       {...register("instagramAccountDatum")}
                       error={errors.instagramAccountDatum?.message}
-                      hint="Ungefähres Datum reicht"
+                      hint="Instagram gibt es seit 6. Oktober 2010"
                     />
                     <Input
                       label="Facebook-Account seit"
                       type="date"
+                      min="2004-02-04"
+                      max={today}
                       {...register("facebookAccountDatum")}
                       error={errors.facebookAccountDatum?.message}
-                      hint="Ungefähres Datum reicht"
+                      hint="Facebook gibt es seit 4. Februar 2004"
                     />
                   </div>
 
@@ -302,6 +310,7 @@ export default function FormularPage() {
                           label="Abschlussdatum der Versicherung"
                           type="date"
                           required
+                          max={today}
                           {...register("versicherungsAbschlussdatum")}
                           error={errors.versicherungsAbschlussdatum?.message}
                         />
