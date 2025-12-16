@@ -7,55 +7,59 @@ import { Signing } from "pandadoc-signing";
 export default function SigningPage() {
   const params = useParams();
   const router = useRouter();
-  const containerRef = useRef<HTMLDivElement>(null);
   const signingRef = useRef<Signing | null>(null);
   const sessionId = params.sessionId as string;
   const [error, setError] = useState<string | null>(null);
+  const containerId = "pandadoc-signing-container";
 
   useEffect(() => {
-    if (!sessionId || !containerRef.current) return;
+    if (!sessionId) return;
 
-    try {
-      // Erstelle Signing-Instanz
-      const signing = new Signing(
-        containerRef.current,
-        {
-          sessionId: sessionId,
-          width: "100%",
-          height: "800px",
-        },
-        {
-          region: (process.env.NEXT_PUBLIC_PANDADOC_REGION as "com" | "eu") || "com",
-        }
-      );
+    // Warte kurz, damit das DOM-Element verfügbar ist
+    const timer = setTimeout(() => {
+      try {
+        // Erstelle Signing-Instanz mit Element-ID
+        const signing = new Signing(
+          containerId,
+          {
+            sessionId: sessionId,
+            width: "100%",
+            height: "800px",
+          },
+          {
+            region: (process.env.NEXT_PUBLIC_PANDADOC_REGION as "com" | "eu") || "com",
+          }
+        );
 
-      signingRef.current = signing;
+        signingRef.current = signing;
 
-      // Event-Handler für erfolgreiche Signatur
-      signing.on("document.completed", () => {
-        // Weiterleitung nach erfolgreicher Signatur
-        setTimeout(() => {
-          router.push("/bestaetigung?signed=true");
-        }, 2000);
-      });
+        // Event-Handler für erfolgreiche Signatur
+        signing.on("document.completed", () => {
+          // Weiterleitung nach erfolgreicher Signatur
+          setTimeout(() => {
+            router.push("/bestaetigung?signed=true");
+          }, 2000);
+        });
 
-      // Event-Handler für Fehler
-      signing.on("document.exception", (error: any) => {
-        console.error("PandaDoc Signing Fehler:", error);
-        setError("Ein Fehler ist beim Laden des Dokuments aufgetreten. Bitte versuche es erneut.");
-      });
+        // Event-Handler für Fehler
+        signing.on("document.exception", (error: any) => {
+          console.error("PandaDoc Signing Fehler:", error);
+          setError("Ein Fehler ist beim Laden des Dokuments aufgetreten. Bitte versuche es erneut.");
+        });
 
-      // Öffne das Signing-Fenster
-      signing.open().catch((err) => {
-        console.error("Fehler beim Öffnen des Signing-Fensters:", err);
-        setError("Ein Fehler ist beim Öffnen des Signing-Fensters aufgetreten.");
-      });
-    } catch (err) {
-      console.error("Fehler beim Initialisieren des PandaDoc Signing:", err);
-      setError("Ein Fehler ist beim Initialisieren der Signatur aufgetreten.");
-    }
+        // Öffne das Signing-Fenster
+        signing.open().catch((err) => {
+          console.error("Fehler beim Öffnen des Signing-Fensters:", err);
+          setError("Ein Fehler ist beim Öffnen des Signing-Fensters aufgetreten.");
+        });
+      } catch (err) {
+        console.error("Fehler beim Initialisieren des PandaDoc Signing:", err);
+        setError("Ein Fehler ist beim Initialisieren der Signatur aufgetreten.");
+      }
+    }, 100);
 
     return () => {
+      clearTimeout(timer);
       // Cleanup
       if (signingRef.current) {
         try {
@@ -79,7 +83,7 @@ export default function SigningPage() {
           </div>
         )}
         <div
-          ref={containerRef}
+          id={containerId}
           className="w-full bg-white rounded-lg shadow-lg"
           style={{ minHeight: "800px" }}
         />
