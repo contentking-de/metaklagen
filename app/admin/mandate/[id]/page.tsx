@@ -198,7 +198,7 @@ export default async function MandateDetailPage({ params }: PageProps) {
         </div>
 
         {/* Signierte Vollmacht */}
-        {mandate.signedVollmachtUrl ? (
+        {(mandate.signedVollmachtUrl || mandate.pandadocDocumentId) ? (
           <Card variant="elevated" padding="lg" className="mb-6 border-2 border-success/20">
             <h2 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
               <svg className="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -228,7 +228,7 @@ export default async function MandateDetailPage({ params }: PageProps) {
               </div>
               <div className="flex gap-3">
                 <a
-                  href={mandate.signedVollmachtUrl}
+                  href={`/api/admin/mandate/${mandate.id}/vollmacht`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent-dark font-medium transition-colors"
@@ -239,8 +239,8 @@ export default async function MandateDetailPage({ params }: PageProps) {
                   Vollmacht öffnen
                 </a>
                 <a
-                  href={mandate.signedVollmachtUrl}
-                  download
+                  href={`/api/admin/mandate/${mandate.id}/vollmacht`}
+                  download={`Vollmacht-${mandate.vorname}-${mandate.nachname}.pdf`}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-background-alt border border-border rounded-lg hover:bg-background font-medium transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -42,30 +42,21 @@ export async function POST(request: Request) {
 
       if (mandate) {
         try {
-          // Lade das signierte Dokument herunter
-          const signedPdfBlob = await downloadSignedDocument(documentId);
-
-          // Konvertiere Blob zu Base64
-          const arrayBuffer = await signedPdfBlob.arrayBuffer();
-          const buffer = Buffer.from(arrayBuffer);
-          const base64Pdf = buffer.toString("base64");
-
-          // Speichere die signierte Vollmacht (als Base64 oder URL)
-          // Option 1: Als Base64 in der DB speichern (nicht ideal für große Dateien)
-          // Option 2: In einem Storage-Service hochladen und URL speichern
-          // Für jetzt speichern wir die URL zum PandaDoc-Dokument
-
-          const pandadocDocumentUrl = `https://app.pandadoc.com/document/${documentId}`;
+          // Verwende unsere eigene API-Route zum Download der Vollmacht
+          // Diese Route lädt die PDF von PandaDoc herunter und leitet sie an den Browser weiter
+          const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+          const vollmachtDownloadUrl = `${baseUrl}/api/admin/mandate/${mandate.id}/vollmacht`;
 
           await prisma.mandate.update({
             where: { id: mandate.id },
             data: {
-              signedVollmachtUrl: pandadocDocumentUrl,
+              signedVollmachtUrl: vollmachtDownloadUrl, // URL zu unserer API-Route
               vollmachtSignedAt: new Date(),
             },
           });
 
           console.log(`Vollmacht für Mandat ${mandate.id} wurde signiert`);
+          console.log(`Vollmacht-Download-URL: ${vollmachtDownloadUrl}`);
         } catch (error) {
           console.error("Fehler beim Verarbeiten der signierten Vollmacht:", error);
           // Aktualisiere trotzdem den Status

@@ -144,7 +144,7 @@ export default async function AdminDashboardPage() {
                         <MandateStatusBadge status={mandate.status} />
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {mandate.signedVollmachtUrl ? (
+                        {(mandate.signedVollmachtUrl || mandate.pandadocDocumentId) ? (
                           <div className="flex items-center gap-2">
                             <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success">
                               <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -158,7 +158,7 @@ export default async function AdminDashboardPage() {
                               </span>
                             )}
                             <a
-                              href={mandate.signedVollmachtUrl}
+                              href={`/api/admin/mandate/${mandate.id}/vollmacht`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-accent hover:text-accent-dark"
