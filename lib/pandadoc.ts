@@ -5,6 +5,7 @@
 
 import fs from "fs";
 import path from "path";
+import FormData from "form-data";
 
 const PANDADOC_API_KEY = process.env.PANDADOC_API_KEY;
 const PANDADOC_API_URL = process.env.PANDADOC_API_URL || "https://api.pandadoc.com/public/v1";
@@ -31,42 +32,67 @@ interface CreateSessionResponse {
 }
 
 /**
- * Erstellt ein PandaDoc-Dokument aus einer PDF-Datei (via URL oder Base64)
+ * Erstellt ein PandaDoc-Dokument aus einer PDF-Datei (via URL oder File Upload)
  */
 export async function createDocumentFromPdf(
-  params: CreateDocumentFromPdfParams & { content?: string }
+  params: CreateDocumentFromPdfParams & { fileBuffer?: Buffer }
 ): Promise<CreateDocumentResponse> {
   if (!PANDADOC_API_KEY) {
     throw new Error("PANDADOC_API_KEY ist nicht gesetzt");
   }
 
-  const requestBody: any = {
-    name: params.name,
-    recipients: params.recipients,
-  };
+  // Wenn File Buffer vorhanden, verwende multipart/form-data
+  if (params.fileBuffer) {
+    const formData = new FormData();
+    
+    formData.append("name", params.name);
+    formData.append("file", params.fileBuffer, {
+      filename: "vollmacht.pdf",
+      contentType: "application/pdf",
+    });
+    
+    // Recipients als JSON-String
+    formData.append("recipients", JSON.stringify(params.recipients));
 
-  // Verwende Base64-Content falls vorhanden, sonst URL
-  if (params.content) {
-    requestBody.content = params.content;
+    const response = await fetch(`${PANDADOC_API_URL}/documents`, {
+      method: "POST",
+      headers: {
+        "Authorization": `API-Key ${PANDADOC_API_KEY}`,
+        ...formData.getHeaders(),
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`PandaDoc API Fehler: ${response.status} - ${error}`);
+    }
+
+    return response.json();
   } else {
-    requestBody.url = params.fileUrl;
+    // Fallback: Verwende URL
+    const requestBody: any = {
+      name: params.name,
+      url: params.fileUrl,
+      recipients: params.recipients,
+    };
+
+    const response = await fetch(`${PANDADOC_API_URL}/documents`, {
+      method: "POST",
+      headers: {
+        "Authorization": `API-Key ${PANDADOC_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`PandaDoc API Fehler: ${response.status} - ${error}`);
+    }
+
+    return response.json();
   }
-
-  const response = await fetch(`${PANDADOC_API_URL}/documents`, {
-    method: "POST",
-    headers: {
-      "Authorization": `API-Key ${PANDADOC_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(requestBody),
-  });
-
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`PandaDoc API Fehler: ${response.status} - ${error}`);
-  }
-
-  return response.json();
 }
 
 /**
@@ -179,8 +205,8 @@ export async function createVollmachtDocument(
   nachname: string,
   email: string
 ): Promise<{ documentId: string; sessionId: string }> {
-  // Lade PDF-Datei und konvertiere zu Base64 für zuverlässigeren Upload
-  let pdfContent: string | undefined;
+  // Lade PDF-Datei als Buffer für File Upload
+  let fileBuffer: Buffer | undefined;
   let pdfUrl: string | undefined;
   
   try {
@@ -189,9 +215,8 @@ export async function createVollmachtDocument(
     const vollmachtPath = path.join(publicPath, "Vollmacht-Meta.pdf");
     
     if (fs.existsSync(vollmachtPath)) {
-      const fileBuffer = fs.readFileSync(vollmachtPath);
-      pdfContent = fileBuffer.toString("base64");
-      console.log("PDF-Datei erfolgreich geladen als Base64");
+      fileBuffer = fs.readFileSync(vollmachtPath);
+      console.log("PDF-Datei erfolgreich geladen als Buffer");
     } else {
       // Fallback: Verwende öffentliche URL
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
@@ -218,8 +243,8 @@ export async function createVollmachtDocument(
     ],
   };
 
-  if (pdfContent) {
-    documentParams.content = pdfContent;
+  if (fileBuffer) {
+    documentParams.fileBuffer = fileBuffer;
   } else {
     documentParams.fileUrl = pdfUrl;
   }
