@@ -70,9 +70,19 @@ export async function createDocumentFromTemplate(
   };
 
   // Content-Felder hinzufügen, falls vorhanden
+  // Content-Felder müssen möglicherweise mit einem recipient Parameter versehen werden
   if (params.content && params.content.length > 0) {
-    requestBody.content = params.content;
-    console.log("Content-Felder:", JSON.stringify(params.content));
+    // Wenn nur ein Recipient vorhanden ist, können wir die Felder diesem zuweisen
+    if (params.recipients.length === 1) {
+      const recipientEmail = params.recipients[0].email;
+      requestBody.content = params.content.map((field) => ({
+        ...field,
+        recipient: recipientEmail, // Felder dem Recipient zuweisen
+      }));
+    } else {
+      requestBody.content = params.content;
+    }
+    console.log("Content-Felder:", JSON.stringify(requestBody.content));
   }
 
   console.log("Erstelle PandaDoc-Dokument aus Template:", params.templateUuid);
@@ -288,25 +298,19 @@ export async function createVollmachtDocument(
   }
 
   console.log(`Verwende PandaDoc Template: ${templateUuid}`);
-  if (recipientRole) {
-    console.log(`Verwende Rolle: ${recipientRole}`);
-  } else {
-    console.log("Keine Rolle gesetzt - PandaDoc verwendet Standard-Rolle aus Template");
-  }
-
+  
   // 1. Dokument aus Template erstellen
-  // Bei Templates müssen die Rollen mit den Rollen im Template übereinstimmen
-  // Wenn keine Rolle gesetzt ist, verwendet PandaDoc die Standard-Rolle aus dem Template
+  // Der User, der unterzeichnen soll, hat immer die Role "Client"
+  // Falls PANDADOC_RECIPIENT_ROLE gesetzt ist, verwenden wir diese, sonst "Client"
+  const roleToUse = recipientRole || "Client";
+  console.log(`Verwende Rolle: ${roleToUse}`);
+
   const recipient: any = {
     email: email,
     first_name: vorname,
     last_name: nachname,
+    role: roleToUse, // Immer explizit setzen
   };
-  
-  // Nur Rolle hinzufügen wenn explizit gesetzt
-  if (recipientRole) {
-    recipient.role = recipientRole;
-  }
 
   // Vollständiger Name für das Namensfeld
   const vollstaendigerName = `${vorname} ${nachname}`;
