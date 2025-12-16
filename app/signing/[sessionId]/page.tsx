@@ -13,10 +13,22 @@ export default function SigningPage() {
   const containerId = "pandadoc-signing-container";
 
   useEffect(() => {
-    if (!sessionId) return;
+    if (!sessionId) {
+      setError("Keine Session-ID gefunden");
+      return;
+    }
+
+    console.log("Initialisiere PandaDoc Signing mit Session-ID:", sessionId);
+    console.log("Region:", process.env.NEXT_PUBLIC_PANDADOC_REGION || "com");
 
     // Warte kurz, damit das DOM-Element verfügbar ist
     const timer = setTimeout(() => {
+      const container = document.getElementById(containerId);
+      if (!container) {
+        setError("Container-Element nicht gefunden");
+        return;
+      }
+
       try {
         // Erstelle Signing-Instanz mit Element-ID
         const signing = new Signing(
@@ -27,7 +39,7 @@ export default function SigningPage() {
             height: "800px",
           },
           {
-            region: (process.env.NEXT_PUBLIC_PANDADOC_REGION as "com" | "eu") || "com",
+            region: (process.env.NEXT_PUBLIC_PANDADOC_REGION as "com" | "eu") || "eu",
           }
         );
 
