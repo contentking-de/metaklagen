@@ -56,7 +56,13 @@ export default function SigningPage() {
         // Event-Handler für Fehler
         signing.on("document.exception", (error: any) => {
           console.error("PandaDoc Signing Fehler:", error);
-          setError("Ein Fehler ist beim Laden des Dokuments aufgetreten. Bitte versuche es erneut.");
+          console.error("Fehler-Details:", JSON.stringify(error, null, 2));
+          setError(`Ein Fehler ist beim Laden des Dokuments aufgetreten: ${error?.message || "Unbekannter Fehler"}. Bitte versuche es erneut oder kontaktiere uns.`);
+        });
+
+        // Event-Handler für Dokument geladen
+        signing.on("document.loaded", () => {
+          console.log("PandaDoc Dokument erfolgreich geladen");
         });
 
         // Öffne das Signing-Fenster
