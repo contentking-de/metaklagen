@@ -5,7 +5,6 @@
 
 import fs from "fs";
 import path from "path";
-import FormData from "form-data";
 
 const PANDADOC_API_KEY = process.env.PANDADOC_API_KEY;
 const PANDADOC_API_URL = process.env.PANDADOC_API_URL || "https://api.pandadoc.com/public/v1";
@@ -43,13 +42,17 @@ export async function createDocumentFromPdf(
 
   // Wenn File Buffer vorhanden, verwende multipart/form-data
   if (params.fileBuffer) {
+    // Verwende native FormData API (kompatibel mit fetch)
     const formData = new FormData();
     
     formData.append("name", params.name);
-    formData.append("file", params.fileBuffer, {
-      filename: "vollmacht.pdf",
-      contentType: "application/pdf",
+    
+    // Erstelle File/Blob aus Buffer für File-Upload
+    // In Node.js 18+ ist Blob verfügbar, sonst verwenden wir Uint8Array
+    const fileBlob = new Blob([new Uint8Array(params.fileBuffer)], { 
+      type: "application/pdf" 
     });
+    formData.append("file", fileBlob, "vollmacht.pdf");
     
     // Recipients als JSON-String
     formData.append("recipients", JSON.stringify(params.recipients));
@@ -58,7 +61,7 @@ export async function createDocumentFromPdf(
       method: "POST",
       headers: {
         "Authorization": `API-Key ${PANDADOC_API_KEY}`,
-        ...formData.getHeaders(),
+        // Content-Type wird automatisch von FormData gesetzt (mit boundary)
       },
       body: formData,
     });
