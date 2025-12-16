@@ -1,39 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Signing } from "pandadoc-signing";
 
 export default function SigningPage() {
   const params = useParams();
   const router = useRouter();
-  const signingRef = useRef<Signing | null>(null);
   const sessionId = params.sessionId as string;
   const [error, setError] = useState<string | null>(null);
-  const containerId = "pandadoc-signing-container";
-
-  // useEffect, um das iframe-Größe kontinuierlich zu überwachen und anzupassen
-  useEffect(() => {
-    const adjustIframeSize = () => {
-      const container = document.getElementById(containerId);
-      if (!container) return;
-
-      const iframe = container.querySelector("iframe");
-      if (iframe) {
-        const containerHeight = Math.max(window.innerHeight - 180, 1200);
-        iframe.style.width = "100%";
-        iframe.style.height = `${containerHeight}px`;
-        iframe.style.minHeight = "1200px";
-        iframe.style.border = "none";
-      }
-    };
-
-    // Prüfe sofort und dann regelmäßig
-    adjustIframeSize();
-    const interval = setInterval(adjustIframeSize, 500);
-
-    return () => clearInterval(interval);
-  }, [containerId]);
+  
+  // Verwende direkte Signing-URL statt SDK
+  // Sessions, die über api.pandadoc.com erstellt wurden, sind für die COM-Region
+  const signingUrl = `https://app.pandadoc.com/s/${sessionId}`;
 
   useEffect(() => {
     if (!sessionId) {
@@ -41,99 +19,39 @@ export default function SigningPage() {
       return;
     }
 
-    console.log("Initialisiere PandaDoc Signing mit Session-ID:", sessionId);
+    console.log("Lade PandaDoc Signing-URL:", signingUrl);
     
-    // WICHTIG: Sessions, die über api.pandadoc.com erstellt wurden, sind für die COM-Region
-    // Da wir immer api.pandadoc.com verwenden (keine separate EU-API existiert),
-    // müssen wir die Region auf 'com' setzen, damit die Session gefunden wird
-    // Die Region wird auf 'com' gesetzt, unabhängig von NEXT_PUBLIC_PANDADOC_REGION,
-    // da die Session über api.pandadoc.com erstellt wurde
-    const region: "com" | "eu" = "com";
-    console.log("Region:", region);
-    console.log("HINWEIS: Session wurde über api.pandadoc.com erstellt, daher Region 'com'");
-
-    // Warte kurz, damit das DOM-Element verfügbar ist
-    const timer = setTimeout(() => {
-      const container = document.getElementById(containerId);
-      if (!container) {
-        setError("Container-Element nicht gefunden");
-        return;
-      }
-
-      try {
-        // Erstelle Signing-Instanz mit Element-ID
-        // WICHTIG: Region muss mit der API-Region übereinstimmen, über die die Session erstellt wurde
-        // Höhe wird vom Container-Style übernommen, hier setzen wir eine große Höhe
-        const containerHeight = Math.max(window.innerHeight - 180, 1200);
-        const signing = new Signing(
-          containerId,
-          {
-            sessionId: sessionId,
-            width: "100%",
-            height: `${containerHeight}px`, // Dynamische Höhe basierend auf Viewport
-          },
-          {
-            region: region,
-          }
-        );
-
-        signingRef.current = signing;
-
-        // Event-Handler für erfolgreiche Signatur
-        signing.on("document.completed", () => {
-          // Weiterleitung nach erfolgreicher Signatur
+    // Überwache Nachrichten vom iframe für Signatur-Abschluss
+    const handleMessage = (event: MessageEvent) => {
+      // Prüfe, ob die Nachricht von PandaDoc kommt
+      if (event.origin.includes("pandadoc.com")) {
+        console.log("Nachricht von PandaDoc:", event.data);
+        
+        // Wenn das Dokument signiert wurde, leite weiter
+        if (event.data?.type === "document.completed" || event.data?.status === "completed") {
           setTimeout(() => {
             router.push("/bestaetigung?signed=true");
           }, 2000);
-        });
-
-        // Event-Handler für Fehler
-        signing.on("document.exception", (error: any) => {
-          console.error("PandaDoc Signing Fehler:", error);
-          console.error("Fehler-Details:", JSON.stringify(error, null, 2));
-          setError(`Ein Fehler ist beim Laden des Dokuments aufgetreten: ${error?.message || "Unbekannter Fehler"}. Bitte versuche es erneut oder kontaktiere uns.`);
-        });
-
-        // Event-Handler für Dokument geladen
-        signing.on("document.loaded", () => {
-          console.log("PandaDoc Dokument erfolgreich geladen");
-          // Stelle sicher, dass das iframe die volle Größe hat
-          setTimeout(() => {
-            const iframe = container.querySelector("iframe");
-            if (iframe) {
-              const containerHeight = Math.max(window.innerHeight - 180, 1200);
-              iframe.style.width = "100%";
-              iframe.style.height = `${containerHeight}px`;
-              iframe.style.minHeight = "1200px";
-              iframe.style.border = "none";
-              console.log("Iframe-Größe angepasst:", iframe.style.width, iframe.style.height);
-            }
-          }, 500);
-        });
-
-        // Öffne das Signing-Fenster
-        signing.open().catch((err) => {
-          console.error("Fehler beim Öffnen des Signing-Fensters:", err);
-          setError("Ein Fehler ist beim Öffnen des Signing-Fensters aufgetreten.");
-        });
-      } catch (err) {
-        console.error("Fehler beim Initialisieren des PandaDoc Signing:", err);
-        setError("Ein Fehler ist beim Initialisieren der Signatur aufgetreten.");
-      }
-    }, 100);
-
-    return () => {
-      clearTimeout(timer);
-      // Cleanup
-      if (signingRef.current) {
-        try {
-          signingRef.current.close();
-        } catch (err) {
-          // Ignoriere Fehler beim Schließen
         }
       }
     };
-  }, [sessionId, router]);
+
+    window.addEventListener("message", handleMessage);
+
+    return () => {
+      window.removeEventListener("message", handleMessage);
+    };
+  }, [sessionId, router, signingUrl]);
+
+  if (!sessionId) {
+    return (
+      <div className="min-h-screen bg-background-alt flex flex-col items-center justify-center p-4">
+        <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-lg">
+          Keine Session-ID gefunden
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background-alt flex flex-col p-4">
@@ -146,17 +64,20 @@ export default function SigningPage() {
             {error}
           </div>
         )}
-        <div
-          id={containerId}
-          className="w-full bg-white rounded-lg shadow-lg"
-          style={{ 
-            height: "calc(100vh - 180px)", 
-            minHeight: "1200px",
-            width: "100%",
-            display: "block",
-            position: "relative"
-          }}
-        />
+        <div className="w-full bg-white rounded-lg shadow-lg overflow-hidden">
+          <iframe
+            src={signingUrl}
+            className="w-full"
+            style={{
+              height: "calc(100vh - 180px)",
+              minHeight: "1200px",
+              border: "none",
+              display: "block"
+            }}
+            title="PandaDoc Signing"
+            allow="camera; microphone; geolocation"
+          />
+        </div>
       </div>
     </div>
   );
