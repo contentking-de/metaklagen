@@ -7,7 +7,14 @@ import fs from "fs";
 import path from "path";
 
 const PANDADOC_API_KEY = process.env.PANDADOC_API_KEY;
-const PANDADOC_API_URL = process.env.PANDADOC_API_URL || "https://api.pandadoc.com/public/v1";
+// API-URL basierend auf Region setzen
+const PANDADOC_REGION = process.env.NEXT_PUBLIC_PANDADOC_REGION || "com";
+const PANDADOC_API_URL = process.env.PANDADOC_API_URL || 
+  (PANDADOC_REGION === "eu" 
+    ? "https://api-eu.pandadoc.com/public/v1" 
+    : "https://api.pandadoc.com/public/v1");
+
+console.log(`PandaDoc Konfiguration: Region=${PANDADOC_REGION}, API_URL=${PANDADOC_API_URL}`);
 
 interface CreateDocumentFromPdfParams {
   name: string;
