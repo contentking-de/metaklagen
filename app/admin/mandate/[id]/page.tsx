@@ -198,39 +198,72 @@ export default async function MandateDetailPage({ params }: PageProps) {
         </div>
 
         {/* Signierte Vollmacht */}
-        {mandate.signedVollmachtUrl && (
-          <Card variant="elevated" padding="lg" className="mb-6">
+        {mandate.signedVollmachtUrl ? (
+          <Card variant="elevated" padding="lg" className="mb-6 border-2 border-success/20">
             <h2 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
-              <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Signierte Vollmacht
+            </h2>
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-sm">
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success">
+                  <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                  Signiert
+                </span>
+                <span className="text-text-muted">
+                  am {mandate.vollmachtSignedAt
+                    ? mandate.vollmachtSignedAt.toLocaleDateString("de-DE", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    : "unbekannt"}
+                </span>
+              </div>
+              <div className="flex gap-3">
+                <a
+                  href={mandate.signedVollmachtUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent-dark font-medium transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                  Vollmacht öffnen
+                </a>
+                <a
+                  href={mandate.signedVollmachtUrl}
+                  download
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-background-alt border border-border rounded-lg hover:bg-background font-medium transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  Herunterladen
+                </a>
+              </div>
+            </div>
+          </Card>
+        ) : (
+          <Card variant="outlined" padding="lg" className="mb-6">
+            <h2 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
+              <svg className="w-5 h-5 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
               Signierte Vollmacht
             </h2>
-            <div className="space-y-3">
-              <p className="text-sm text-text-muted">
-                Die Vollmacht wurde am{" "}
-                {mandate.vollmachtSignedAt
-                  ? mandate.vollmachtSignedAt.toLocaleDateString("de-DE", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })
-                  : "unbekannt"}{" "}
-                digital signiert.
-              </p>
-              <a
-                href={mandate.signedVollmachtUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-accent hover:text-accent-dark font-medium"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
-                Signierte Vollmacht öffnen
-              </a>
+            <div className="flex items-center gap-2 text-sm text-text-muted">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Vollmacht wurde noch nicht signiert
             </div>
           </Card>
         )}

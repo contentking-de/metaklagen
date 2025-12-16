@@ -113,6 +113,9 @@ export default async function AdminDashboardPage() {
                       Status
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
+                      Vollmacht
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
                       Datum
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
@@ -139,6 +142,41 @@ export default async function AdminDashboardPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <MandateStatusBadge status={mandate.status} />
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {mandate.signedVollmachtUrl ? (
+                          <div className="flex items-center gap-2">
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success">
+                              <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                              </svg>
+                              Signiert
+                            </span>
+                            {mandate.vollmachtSignedAt && (
+                              <span className="text-xs text-text-muted">
+                                {mandate.vollmachtSignedAt.toLocaleDateString("de-DE")}
+                              </span>
+                            )}
+                            <a
+                              href={mandate.signedVollmachtUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-accent hover:text-accent-dark"
+                              title="Signierte Vollmacht öffnen"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                              </svg>
+                            </a>
+                          </div>
+                        ) : (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-border text-text-muted">
+                            <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Ausstehend
+                          </span>
+                        )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-text-muted">
                         {mandate.createdAt.toLocaleDateString("de-DE")}
