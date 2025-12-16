@@ -209,7 +209,11 @@ export async function createSigningSession(
     throw new Error("PANDADOC_API_KEY ist nicht gesetzt");
   }
 
-  const response = await fetch(`${PANDADOC_API_URL}/documents/${documentId}/session`, {
+  const url = `${PANDADOC_API_URL}/documents/${documentId}/session`;
+  console.log(`Erstelle Signing-Session: POST ${url}`);
+  console.log(`Recipient: ${recipientEmail}`);
+
+  const response = await fetch(url, {
     method: "POST",
     headers: {
       "Authorization": `API-Key ${PANDADOC_API_KEY}`,
@@ -222,10 +226,14 @@ export async function createSigningSession(
 
   if (!response.ok) {
     const error = await response.text();
+    console.error(`PandaDoc API Fehler beim Erstellen der Session: ${response.status}`);
+    console.error(`Fehler-Details: ${error}`);
     throw new Error(`PandaDoc API Fehler: ${response.status} - ${error}`);
   }
 
-  return response.json();
+  const sessionData = await response.json();
+  console.log(`Signing-Session erfolgreich erstellt:`, sessionData);
+  return sessionData;
 }
 
 /**
@@ -315,10 +323,18 @@ export async function createVollmachtDocument(
   }
 
   // 3. Dokument senden (ohne Benachrichtigung)
+  console.log(`Sende Dokument ${document.id}...`);
   await sendDocument(document.id);
+  console.log(`Dokument ${document.id} wurde gesendet`);
 
-  // 4. Signing-Session erstellen
+  // 4. Warte kurz, damit das Dokument vollständig verarbeitet wird
+  await new Promise((resolve) => setTimeout(resolve, 2000)); // 2 Sekunden warten
+
+  // 5. Signing-Session erstellen
+  console.log(`Erstelle Signing-Session für Dokument ${document.id} und E-Mail ${email}...`);
+  console.log(`Verwende API-URL: ${PANDADOC_API_URL}`);
   const session = await createSigningSession(document.id, email);
+  console.log(`Signing-Session erstellt: ${session.id}`);
 
   return {
     documentId: document.id,
