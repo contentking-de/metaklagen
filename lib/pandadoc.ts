@@ -27,7 +27,7 @@ interface CreateDocumentFromTemplateParams {
     email: string;
     first_name: string;
     last_name: string;
-    role: string;
+    role?: string; // Optional - wird nur gesetzt wenn angegeben
   }>;
 }
 
@@ -255,29 +255,37 @@ export async function createVollmachtDocument(
 ): Promise<{ documentId: string; sessionId: string }> {
   // Verwende PandaDoc Template (löst Berechtigungsprobleme)
   const templateUuid = process.env.PANDADOC_TEMPLATE_UUID;
-  const recipientRole = process.env.PANDADOC_RECIPIENT_ROLE || "Signer 1"; // Standard-Rolle, kann überschrieben werden
+  const recipientRole = process.env.PANDADOC_RECIPIENT_ROLE; // Optional - nur setzen wenn gesetzt
   
   if (!templateUuid) {
     throw new Error("PANDADOC_TEMPLATE_UUID ist nicht gesetzt");
   }
 
   console.log(`Verwende PandaDoc Template: ${templateUuid}`);
-  console.log(`Verwende Rolle: ${recipientRole}`);
+  if (recipientRole) {
+    console.log(`Verwende Rolle: ${recipientRole}`);
+  } else {
+    console.log("Keine Rolle gesetzt - PandaDoc verwendet Standard-Rolle aus Template");
+  }
 
   // 1. Dokument aus Template erstellen
   // Bei Templates müssen die Rollen mit den Rollen im Template übereinstimmen
-  // Die Rolle kann über PANDADOC_RECIPIENT_ROLE Umgebungsvariable gesetzt werden
+  // Wenn keine Rolle gesetzt ist, verwendet PandaDoc die Standard-Rolle aus dem Template
+  const recipient: any = {
+    email: email,
+    first_name: vorname,
+    last_name: nachname,
+  };
+  
+  // Nur Rolle hinzufügen wenn explizit gesetzt
+  if (recipientRole) {
+    recipient.role = recipientRole;
+  }
+
   const document = await createDocumentFromTemplate({
     name: `Vollmacht - ${vorname} ${nachname}`,
     templateUuid: templateUuid,
-    recipients: [
-      {
-        email: email,
-        first_name: vorname,
-        last_name: nachname,
-        role: recipientRole,
-      },
-    ],
+    recipients: [recipient],
   });
 
   // 2. Warten bis Dokument bereit ist (polling)
