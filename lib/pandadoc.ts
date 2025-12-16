@@ -7,12 +7,10 @@ import fs from "fs";
 import path from "path";
 
 const PANDADOC_API_KEY = process.env.PANDADOC_API_KEY;
-// API-URL basierend auf Region setzen
+// API-URL ist immer die gleiche, unabhängig von der Region
+// Die Region wird nur für das Frontend Signing SDK verwendet
 const PANDADOC_REGION = process.env.NEXT_PUBLIC_PANDADOC_REGION || "com";
-const PANDADOC_API_URL = process.env.PANDADOC_API_URL || 
-  (PANDADOC_REGION === "eu" 
-    ? "https://api-eu.pandadoc.com/public/v1" 
-    : "https://api.pandadoc.com/public/v1");
+const PANDADOC_API_URL = process.env.PANDADOC_API_URL || "https://api.pandadoc.com/public/v1";
 
 console.log(`PandaDoc Konfiguration: Region=${PANDADOC_REGION}, API_URL=${PANDADOC_API_URL}`);
 
@@ -328,13 +326,37 @@ export async function createVollmachtDocument(
   console.log(`Dokument ${document.id} wurde gesendet`);
 
   // 4. Warte kurz, damit das Dokument vollständig verarbeitet wird
-  await new Promise((resolve) => setTimeout(resolve, 2000)); // 2 Sekunden warten
+  // Reduziert auf 1 Sekunde - sollte ausreichen
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
-  // 5. Signing-Session erstellen
+  // 5. Signing-Session erstellen (mit Retry-Logik)
   console.log(`Erstelle Signing-Session für Dokument ${document.id} und E-Mail ${email}...`);
   console.log(`Verwende API-URL: ${PANDADOC_API_URL}`);
-  const session = await createSigningSession(document.id, email);
-  console.log(`Signing-Session erstellt: ${session.id}`);
+  console.log(`Verwende Region: ${PANDADOC_REGION}`);
+  
+  let session: CreateSessionResponse | null = null;
+  let sessionAttempts = 0;
+  const maxSessionAttempts = 3;
+  
+  while (sessionAttempts < maxSessionAttempts) {
+    try {
+      session = await createSigningSession(document.id, email);
+      console.log(`Signing-Session erfolgreich erstellt: ${session.id}`);
+      break;
+    } catch (error) {
+      sessionAttempts++;
+      if (sessionAttempts >= maxSessionAttempts) {
+        console.error(`Session-Erstellung fehlgeschlagen nach ${maxSessionAttempts} Versuchen`);
+        throw error;
+      }
+      console.log(`Session-Erstellung fehlgeschlagen, Versuch ${sessionAttempts}/${maxSessionAttempts}, warte 1 Sekunde...`);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+  }
+  
+  if (!session) {
+    throw new Error("Session konnte nicht erstellt werden");
+  }
 
   return {
     documentId: document.id,
