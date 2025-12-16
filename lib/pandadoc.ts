@@ -40,62 +40,36 @@ export async function createDocumentFromPdf(
     throw new Error("PANDADOC_API_KEY ist nicht gesetzt");
   }
 
-  // Wenn File Buffer vorhanden, verwende multipart/form-data
-  if (params.fileBuffer) {
-    // Verwende native FormData API (kompatibel mit fetch)
-    const formData = new FormData();
-    
-    formData.append("name", params.name);
-    
-    // Erstelle File/Blob aus Buffer für File-Upload
-    // In Node.js 18+ ist Blob verfügbar, sonst verwenden wir Uint8Array
-    const fileBlob = new Blob([new Uint8Array(params.fileBuffer)], { 
-      type: "application/pdf" 
-    });
-    formData.append("file", fileBlob, "vollmacht.pdf");
-    
-    // Recipients als JSON-String
-    formData.append("recipients", JSON.stringify(params.recipients));
-
-    const response = await fetch(`${PANDADOC_API_URL}/documents`, {
-      method: "POST",
-      headers: {
-        "Authorization": `API-Key ${PANDADOC_API_KEY}`,
-        // Content-Type wird automatisch von FormData gesetzt (mit boundary)
-      },
-      body: formData,
-    });
-
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`PandaDoc API Fehler: ${response.status} - ${error}`);
-    }
-
-    return response.json();
-  } else {
-    // Fallback: Verwende URL
-    const requestBody: any = {
-      name: params.name,
-      url: params.fileUrl,
-      recipients: params.recipients,
-    };
-
-    const response = await fetch(`${PANDADOC_API_URL}/documents`, {
-      method: "POST",
-      headers: {
-        "Authorization": `API-Key ${PANDADOC_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requestBody),
-    });
-
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`PandaDoc API Fehler: ${response.status} - ${error}`);
-    }
-
-    return response.json();
+  // Verwende URL-Methode (zuverlässiger als File-Upload in Serverless-Umgebung)
+  if (!params.fileUrl) {
+    throw new Error("fileUrl ist erforderlich für die Dokument-Erstellung");
   }
+
+  const requestBody: any = {
+    name: params.name,
+    url: params.fileUrl,
+    recipients: params.recipients,
+  };
+
+  console.log("Erstelle PandaDoc-Dokument mit URL:", params.fileUrl);
+  console.log("Name:", params.name);
+  console.log("Recipients:", JSON.stringify(params.recipients));
+
+  const response = await fetch(`${PANDADOC_API_URL}/documents`, {
+    method: "POST",
+    headers: {
+      "Authorization": `API-Key ${PANDADOC_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(requestBody),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`PandaDoc API Fehler: ${response.status} - ${error}`);
+  }
+
+  return response.json();
 }
 
 /**
@@ -208,34 +182,16 @@ export async function createVollmachtDocument(
   nachname: string,
   email: string
 ): Promise<{ documentId: string; sessionId: string }> {
-  // Lade PDF-Datei als Buffer für File Upload
-  let fileBuffer: Buffer | undefined;
-  let pdfUrl: string | undefined;
+  // Verwende öffentliche URL für PDF (einfacher und zuverlässiger als File-Upload)
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const pdfUrl = `${baseUrl}/Vollmacht-Meta.pdf`;
   
-  try {
-    // Versuche PDF-Datei direkt zu laden
-    const publicPath = path.join(process.cwd(), "public");
-    const vollmachtPath = path.join(publicPath, "Vollmacht-Meta.pdf");
-    
-    if (fs.existsSync(vollmachtPath)) {
-      fileBuffer = fs.readFileSync(vollmachtPath);
-      console.log("PDF-Datei erfolgreich geladen als Buffer");
-    } else {
-      // Fallback: Verwende öffentliche URL
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-      pdfUrl = `${baseUrl}/Vollmacht-Meta.pdf`;
-      console.log(`PDF-URL verwendet: ${pdfUrl}`);
-    }
-  } catch (error) {
-    console.error("Fehler beim Laden der PDF-Datei:", error);
-    // Fallback: Verwende öffentliche URL
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-    pdfUrl = `${baseUrl}/Vollmacht-Meta.pdf`;
-  }
+  console.log(`Verwende PDF-URL: ${pdfUrl}`);
 
-  // 1. Dokument erstellen
-  const documentParams: any = {
+  // 1. Dokument erstellen mit URL (zuverlässiger als File-Upload in Serverless-Umgebung)
+  const document = await createDocumentFromPdf({
     name: `Vollmacht - ${vorname} ${nachname}`,
+    fileUrl: pdfUrl,
     recipients: [
       {
         email: email,
@@ -244,15 +200,7 @@ export async function createVollmachtDocument(
         role: "Signer",
       },
     ],
-  };
-
-  if (fileBuffer) {
-    documentParams.fileBuffer = fileBuffer;
-  } else {
-    documentParams.fileUrl = pdfUrl;
-  }
-
-  const document = await createDocumentFromPdf(documentParams);
+  });
 
   // 2. Warten bis Dokument bereit ist (polling)
   let documentReady = false;
