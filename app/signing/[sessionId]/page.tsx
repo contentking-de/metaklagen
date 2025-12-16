@@ -12,6 +12,29 @@ export default function SigningPage() {
   const [error, setError] = useState<string | null>(null);
   const containerId = "pandadoc-signing-container";
 
+  // useEffect, um das iframe-Größe kontinuierlich zu überwachen und anzupassen
+  useEffect(() => {
+    const adjustIframeSize = () => {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      const iframe = container.querySelector("iframe");
+      if (iframe) {
+        const containerHeight = Math.max(window.innerHeight - 180, 1200);
+        iframe.style.width = "100%";
+        iframe.style.height = `${containerHeight}px`;
+        iframe.style.minHeight = "1200px";
+        iframe.style.border = "none";
+      }
+    };
+
+    // Prüfe sofort und dann regelmäßig
+    adjustIframeSize();
+    const interval = setInterval(adjustIframeSize, 500);
+
+    return () => clearInterval(interval);
+  }, [containerId]);
+
   useEffect(() => {
     if (!sessionId) {
       setError("Keine Session-ID gefunden");
@@ -74,6 +97,18 @@ export default function SigningPage() {
         // Event-Handler für Dokument geladen
         signing.on("document.loaded", () => {
           console.log("PandaDoc Dokument erfolgreich geladen");
+          // Stelle sicher, dass das iframe die volle Größe hat
+          setTimeout(() => {
+            const iframe = container.querySelector("iframe");
+            if (iframe) {
+              const containerHeight = Math.max(window.innerHeight - 180, 1200);
+              iframe.style.width = "100%";
+              iframe.style.height = `${containerHeight}px`;
+              iframe.style.minHeight = "1200px";
+              iframe.style.border = "none";
+              console.log("Iframe-Größe angepasst:", iframe.style.width, iframe.style.height);
+            }
+          }, 500);
         });
 
         // Öffne das Signing-Fenster
@@ -114,7 +149,13 @@ export default function SigningPage() {
         <div
           id={containerId}
           className="w-full bg-white rounded-lg shadow-lg"
-          style={{ height: "calc(100vh - 180px)", minHeight: "1200px" }}
+          style={{ 
+            height: "calc(100vh - 180px)", 
+            minHeight: "1200px",
+            width: "100%",
+            display: "block",
+            position: "relative"
+          }}
         />
       </div>
     </div>
