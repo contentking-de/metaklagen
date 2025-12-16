@@ -121,6 +121,29 @@ export async function createDocumentFromPdf(
 }
 
 /**
+ * Ruft Template-Informationen ab (inkl. verfügbarer Rollen)
+ */
+export async function getTemplateInfo(templateUuid: string): Promise<any> {
+  if (!PANDADOC_API_KEY) {
+    throw new Error("PANDADOC_API_KEY ist nicht gesetzt");
+  }
+
+  const response = await fetch(`${PANDADOC_API_URL}/templates/${templateUuid}`, {
+    method: "GET",
+    headers: {
+      "Authorization": `API-Key ${PANDADOC_API_KEY}`,
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`PandaDoc API Fehler: ${response.status} - ${error}`);
+  }
+
+  return response.json();
+}
+
+/**
  * Prüft den Status eines Dokuments
  */
 export async function getDocumentStatus(documentId: string): Promise<{ status: string }> {
@@ -232,14 +255,18 @@ export async function createVollmachtDocument(
 ): Promise<{ documentId: string; sessionId: string }> {
   // Verwende PandaDoc Template (löst Berechtigungsprobleme)
   const templateUuid = process.env.PANDADOC_TEMPLATE_UUID;
+  const recipientRole = process.env.PANDADOC_RECIPIENT_ROLE || "Signer 1"; // Standard-Rolle, kann überschrieben werden
   
   if (!templateUuid) {
     throw new Error("PANDADOC_TEMPLATE_UUID ist nicht gesetzt");
   }
 
   console.log(`Verwende PandaDoc Template: ${templateUuid}`);
+  console.log(`Verwende Rolle: ${recipientRole}`);
 
   // 1. Dokument aus Template erstellen
+  // Bei Templates müssen die Rollen mit den Rollen im Template übereinstimmen
+  // Die Rolle kann über PANDADOC_RECIPIENT_ROLE Umgebungsvariable gesetzt werden
   const document = await createDocumentFromTemplate({
     name: `Vollmacht - ${vorname} ${nachname}`,
     templateUuid: templateUuid,
@@ -248,7 +275,7 @@ export async function createVollmachtDocument(
         email: email,
         first_name: vorname,
         last_name: nachname,
-        role: "Signer",
+        role: recipientRole,
       },
     ],
   });
