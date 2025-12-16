@@ -37,6 +37,10 @@ interface CreateDocumentFromTemplateParams {
     last_name: string;
     role?: string; // Optional - wird nur gesetzt wenn angegeben
   }>;
+  content?: Array<{
+    field_id: string;
+    value: string;
+  }>; // Optional - Content-Felder zum Vorbefüllen
 }
 
 interface CreateDocumentResponse {
@@ -64,6 +68,12 @@ export async function createDocumentFromTemplate(
     template_uuid: params.templateUuid,
     recipients: params.recipients,
   };
+
+  // Content-Felder hinzufügen, falls vorhanden
+  if (params.content && params.content.length > 0) {
+    requestBody.content = params.content;
+    console.log("Content-Felder:", JSON.stringify(params.content));
+  }
 
   console.log("Erstelle PandaDoc-Dokument aus Template:", params.templateUuid);
   console.log("Name:", params.name);
@@ -298,10 +308,20 @@ export async function createVollmachtDocument(
     recipient.role = recipientRole;
   }
 
+  // Vollständiger Name für das Namensfeld
+  const vollstaendigerName = `${vorname} ${nachname}`;
+
   const document = await createDocumentFromTemplate({
-    name: `Vollmacht - ${vorname} ${nachname}`,
+    name: `Vollmacht - ${vollstaendigerName}`,
     templateUuid: templateUuid,
     recipients: [recipient],
+    // Vorbefüllen des Namensfeldes
+    content: [
+      {
+        field_id: "text9d382e27-0966-41f3-aedb-d885e816db0b_0",
+        value: vollstaendigerName,
+      },
+    ],
   });
 
   // 2. Warten bis Dokument bereit ist (polling)
