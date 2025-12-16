@@ -45,7 +45,7 @@ export default function SigningPage() {
           {
             sessionId: sessionId,
             width: "100%",
-            height: "800px",
+            height: "calc(100vh - 200px)", // Nutze fast die volle Viewport-Höhe, lasse Platz für Header
           },
           {
             region: region,
@@ -112,7 +112,7 @@ export default function SigningPage() {
         <div
           id={containerId}
           className="w-full bg-white rounded-lg shadow-lg"
-          style={{ minHeight: "800px" }}
+          style={{ minHeight: "calc(100vh - 200px)" }}
         />
       </div>
     </div>
