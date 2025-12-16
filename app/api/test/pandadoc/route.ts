@@ -8,6 +8,8 @@ export async function GET() {
   const checks = {
     PANDADOC_API_KEY: !!process.env.PANDADOC_API_KEY,
     PANDADOC_API_KEY_LENGTH: process.env.PANDADOC_API_KEY?.length || 0,
+    PANDADOC_TEMPLATE_UUID: !!process.env.PANDADOC_TEMPLATE_UUID,
+    PANDADOC_TEMPLATE_UUID_VALUE: process.env.PANDADOC_TEMPLATE_UUID || "NICHT GESETZT",
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL || "NICHT GESETZT",
     PANDADOC_API_URL: process.env.PANDADOC_API_URL || "https://api.pandadoc.com/public/v1",
   };

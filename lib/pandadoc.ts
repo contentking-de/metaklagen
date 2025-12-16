@@ -20,6 +20,17 @@ interface CreateDocumentFromPdfParams {
   }>;
 }
 
+interface CreateDocumentFromTemplateParams {
+  name: string;
+  templateUuid: string;
+  recipients: Array<{
+    email: string;
+    first_name: string;
+    last_name: string;
+    role: string;
+  }>;
+}
+
 interface CreateDocumentResponse {
   id: string;
   name: string;
@@ -28,6 +39,43 @@ interface CreateDocumentResponse {
 
 interface CreateSessionResponse {
   id: string;
+}
+
+/**
+ * Erstellt ein PandaDoc-Dokument aus einem Template
+ */
+export async function createDocumentFromTemplate(
+  params: CreateDocumentFromTemplateParams
+): Promise<CreateDocumentResponse> {
+  if (!PANDADOC_API_KEY) {
+    throw new Error("PANDADOC_API_KEY ist nicht gesetzt");
+  }
+
+  const requestBody: any = {
+    name: params.name,
+    template_uuid: params.templateUuid,
+    recipients: params.recipients,
+  };
+
+  console.log("Erstelle PandaDoc-Dokument aus Template:", params.templateUuid);
+  console.log("Name:", params.name);
+  console.log("Recipients:", JSON.stringify(params.recipients));
+
+  const response = await fetch(`${PANDADOC_API_URL}/documents`, {
+    method: "POST",
+    headers: {
+      "Authorization": `API-Key ${PANDADOC_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(requestBody),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`PandaDoc API Fehler: ${response.status} - ${error}`);
+  }
+
+  return response.json();
 }
 
 /**
@@ -182,16 +230,19 @@ export async function createVollmachtDocument(
   nachname: string,
   email: string
 ): Promise<{ documentId: string; sessionId: string }> {
-  // Verwende öffentliche URL für PDF (einfacher und zuverlässiger als File-Upload)
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-  const pdfUrl = `${baseUrl}/Vollmacht-Meta.pdf`;
+  // Verwende PandaDoc Template (löst Berechtigungsprobleme)
+  const templateUuid = process.env.PANDADOC_TEMPLATE_UUID;
   
-  console.log(`Verwende PDF-URL: ${pdfUrl}`);
+  if (!templateUuid) {
+    throw new Error("PANDADOC_TEMPLATE_UUID ist nicht gesetzt");
+  }
 
-  // 1. Dokument erstellen mit URL (zuverlässiger als File-Upload in Serverless-Umgebung)
-  const document = await createDocumentFromPdf({
+  console.log(`Verwende PandaDoc Template: ${templateUuid}`);
+
+  // 1. Dokument aus Template erstellen
+  const document = await createDocumentFromTemplate({
     name: `Vollmacht - ${vorname} ${nachname}`,
-    fileUrl: pdfUrl,
+    templateUuid: templateUuid,
     recipients: [
       {
         email: email,
