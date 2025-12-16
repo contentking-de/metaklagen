@@ -3,6 +3,9 @@
  * Dokumentation: https://developers.pandadoc.com/docs/embedded-signing
  */
 
+import fs from "fs";
+import path from "path";
+
 const PANDADOC_API_KEY = process.env.PANDADOC_API_KEY;
 const PANDADOC_API_URL = process.env.PANDADOC_API_URL || "https://api.pandadoc.com/public/v1";
 
@@ -28,13 +31,25 @@ interface CreateSessionResponse {
 }
 
 /**
- * Erstellt ein PandaDoc-Dokument aus einer PDF-Datei
+ * Erstellt ein PandaDoc-Dokument aus einer PDF-Datei (via URL oder Base64)
  */
 export async function createDocumentFromPdf(
-  params: CreateDocumentFromPdfParams
+  params: CreateDocumentFromPdfParams & { content?: string }
 ): Promise<CreateDocumentResponse> {
   if (!PANDADOC_API_KEY) {
     throw new Error("PANDADOC_API_KEY ist nicht gesetzt");
+  }
+
+  const requestBody: any = {
+    name: params.name,
+    recipients: params.recipients,
+  };
+
+  // Verwende Base64-Content falls vorhanden, sonst URL
+  if (params.content) {
+    requestBody.content = params.content;
+  } else {
+    requestBody.url = params.fileUrl;
   }
 
   const response = await fetch(`${PANDADOC_API_URL}/documents`, {
@@ -43,11 +58,7 @@ export async function createDocumentFromPdf(
       "Authorization": `API-Key ${PANDADOC_API_KEY}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      name: params.name,
-      url: params.fileUrl,
-      recipients: params.recipients,
-    }),
+    body: JSON.stringify(requestBody),
   });
 
   if (!response.ok) {
@@ -168,17 +179,35 @@ export async function createVollmachtDocument(
   nachname: string,
   email: string
 ): Promise<{ documentId: string; sessionId: string }> {
-  // URL zur Vollmacht-PDF (öffentlich zugänglich)
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-  const vollmachtPdfUrl = `${baseUrl}/Vollmacht-Meta.pdf`;
-
-  // Alternative: Wenn die PDF als Base64 hochgeladen werden soll, können wir das auch machen
-  // Für jetzt verwenden wir die öffentliche URL
+  // Lade PDF-Datei und konvertiere zu Base64 für zuverlässigeren Upload
+  let pdfContent: string | undefined;
+  let pdfUrl: string | undefined;
+  
+  try {
+    // Versuche PDF-Datei direkt zu laden
+    const publicPath = path.join(process.cwd(), "public");
+    const vollmachtPath = path.join(publicPath, "Vollmacht-Meta.pdf");
+    
+    if (fs.existsSync(vollmachtPath)) {
+      const fileBuffer = fs.readFileSync(vollmachtPath);
+      pdfContent = fileBuffer.toString("base64");
+      console.log("PDF-Datei erfolgreich geladen als Base64");
+    } else {
+      // Fallback: Verwende öffentliche URL
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+      pdfUrl = `${baseUrl}/Vollmacht-Meta.pdf`;
+      console.log(`PDF-URL verwendet: ${pdfUrl}`);
+    }
+  } catch (error) {
+    console.error("Fehler beim Laden der PDF-Datei:", error);
+    // Fallback: Verwende öffentliche URL
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    pdfUrl = `${baseUrl}/Vollmacht-Meta.pdf`;
+  }
 
   // 1. Dokument erstellen
-  const document = await createDocumentFromPdf({
+  const documentParams: any = {
     name: `Vollmacht - ${vorname} ${nachname}`,
-    fileUrl: vollmachtPdfUrl,
     recipients: [
       {
         email: email,
@@ -187,7 +216,15 @@ export async function createVollmachtDocument(
         role: "Signer",
       },
     ],
-  });
+  };
+
+  if (pdfContent) {
+    documentParams.content = pdfContent;
+  } else {
+    documentParams.fileUrl = pdfUrl;
+  }
+
+  const document = await createDocumentFromPdf(documentParams);
 
   // 2. Warten bis Dokument bereit ist (polling)
   let documentReady = false;

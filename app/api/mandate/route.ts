@@ -47,34 +47,7 @@ export async function POST(request: Request) {
       },
     });
 
-    // PandaDoc-Dokument für Vollmacht erstellen (async, nicht blockierend)
-    let pandadocSigningUrl: string | undefined;
-    try {
-      const { documentId, sessionId } = await createVollmachtDocument(
-        mandate.id,
-        mandate.vorname,
-        mandate.nachname,
-        mandate.email
-      );
-
-      // Speichere PandaDoc-Daten in der Datenbank
-      await prisma.mandate.update({
-        where: { id: mandate.id },
-        data: {
-          pandadocDocumentId: documentId,
-          pandadocSessionId: sessionId,
-        },
-      });
-
-      // Erstelle Signing-URL (Embedded Signing)
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-      pandadocSigningUrl = `${baseUrl}/signing/${sessionId}`;
-    } catch (error) {
-      console.error("Fehler beim Erstellen des PandaDoc-Dokuments:", error);
-      // Fehler wird geloggt, aber Mandat-Erstellung wird fortgesetzt
-    }
-
-    // E-Mails versenden (async, nicht blockierend)
+    // E-Mail-Daten vorbereiten
     const emailData = {
       vorname: mandate.vorname,
       nachname: mandate.nachname,
@@ -88,12 +61,56 @@ export async function POST(request: Request) {
       versicherungsnehmerVerhaeltnis: mandate.versicherungsnehmerVerhaeltnis || undefined,
     };
 
-    // Bestätigungs-E-Mail an Nutzer
+    // PandaDoc-Dokument für Vollmacht erstellen (vor dem E-Mail-Versand)
+    let pandadocSigningUrl: string | undefined;
+    
+    // Prüfe ob PandaDoc API Key gesetzt ist
+    if (!process.env.PANDADOC_API_KEY) {
+      console.warn("PANDADOC_API_KEY ist nicht gesetzt - PandaDoc-Integration wird übersprungen");
+    } else {
+      try {
+        console.log(`Erstelle PandaDoc-Dokument für Mandat ${mandate.id}...`);
+        const { documentId, sessionId } = await createVollmachtDocument(
+          mandate.id,
+          mandate.vorname,
+          mandate.nachname,
+          mandate.email
+        );
+
+        // Speichere PandaDoc-Daten in der Datenbank
+        await prisma.mandate.update({
+          where: { id: mandate.id },
+          data: {
+            pandadocDocumentId: documentId,
+            pandadocSessionId: sessionId,
+          },
+        });
+
+        // Erstelle Signing-URL (Embedded Signing)
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+        pandadocSigningUrl = `${baseUrl}/signing/${sessionId}`;
+        
+        console.log(`✓ PandaDoc-Dokument erstellt für Mandat ${mandate.id}`);
+        console.log(`  - Document ID: ${documentId}`);
+        console.log(`  - Session ID: ${sessionId}`);
+        console.log(`  - Signing URL: ${pandadocSigningUrl}`);
+      } catch (error) {
+        console.error("✗ Fehler beim Erstellen des PandaDoc-Dokuments:", error);
+        if (error instanceof Error) {
+          console.error("  Fehlermeldung:", error.message);
+          console.error("  Stack:", error.stack);
+        }
+        // Fehler wird geloggt, aber E-Mail wird trotzdem gesendet (ohne PandaDoc-Link)
+      }
+    }
+
+    // Bestätigungs-E-Mail an Nutzer (nach PandaDoc-Erstellung)
+    console.log(`Sende Bestätigungs-E-Mail an ${mandate.email}${pandadocSigningUrl ? " (mit PandaDoc-Link)" : " (ohne PandaDoc-Link)"}`);
     sendConfirmationEmail({
       ...emailData,
       pandadocSigningUrl,
     }).catch((error) => {
-      console.error("Fehler beim Senden der Bestätigungs-E-Mail:", error);
+      console.error("✗ Fehler beim Senden der Bestätigungs-E-Mail:", error);
     });
 
     // Benachrichtigung an Kanzlei
