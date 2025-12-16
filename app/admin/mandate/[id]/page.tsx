@@ -198,7 +198,7 @@ export default async function MandateDetailPage({ params }: PageProps) {
         </div>
 
         {/* Signierte Vollmacht */}
-        {(mandate.signedVollmachtUrl || mandate.pandadocDocumentId) ? (
+        {mandate.vollmachtSignedAt ? (
           <Card variant="elevated" padding="lg" className="mb-6 border-2 border-success/20">
             <h2 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
               <svg className="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">

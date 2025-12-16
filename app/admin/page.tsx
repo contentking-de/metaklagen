@@ -144,7 +144,7 @@ export default async function AdminDashboardPage() {
                         <MandateStatusBadge status={mandate.status} />
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {(mandate.signedVollmachtUrl || mandate.pandadocDocumentId) ? (
+                        {mandate.vollmachtSignedAt ? (
                           <div className="flex items-center gap-2">
                             <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success">
                               <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">

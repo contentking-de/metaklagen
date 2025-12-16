@@ -39,6 +39,14 @@ export async function GET(
       );
     }
 
+    // Prüfe, ob die Vollmacht wirklich signiert wurde
+    if (!mandate.vollmachtSignedAt) {
+      return NextResponse.json(
+        { error: "Vollmacht wurde noch nicht signiert" },
+        { status: 400 }
+      );
+    }
+
     try {
       // Lade das signierte PDF von PandaDoc
       const pdfBlob = await downloadSignedDocument(mandate.pandadocDocumentId);
