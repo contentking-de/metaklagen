@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { mandateFormSchema } from "@/lib/validations";
 import { sendConfirmationEmail, sendKanzleiNotification } from "@/lib/email";
+import { createVollmachtDocument } from "@/lib/pandadoc";
 
 export async function POST(request: Request) {
   try {
@@ -46,6 +47,33 @@ export async function POST(request: Request) {
       },
     });
 
+    // PandaDoc-Dokument für Vollmacht erstellen (async, nicht blockierend)
+    let pandadocSigningUrl: string | undefined;
+    try {
+      const { documentId, sessionId } = await createVollmachtDocument(
+        mandate.id,
+        mandate.vorname,
+        mandate.nachname,
+        mandate.email
+      );
+
+      // Speichere PandaDoc-Daten in der Datenbank
+      await prisma.mandate.update({
+        where: { id: mandate.id },
+        data: {
+          pandadocDocumentId: documentId,
+          pandadocSessionId: sessionId,
+        },
+      });
+
+      // Erstelle Signing-URL (Embedded Signing)
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+      pandadocSigningUrl = `${baseUrl}/signing/${sessionId}`;
+    } catch (error) {
+      console.error("Fehler beim Erstellen des PandaDoc-Dokuments:", error);
+      // Fehler wird geloggt, aber Mandat-Erstellung wird fortgesetzt
+    }
+
     // E-Mails versenden (async, nicht blockierend)
     const emailData = {
       vorname: mandate.vorname,
@@ -61,7 +89,10 @@ export async function POST(request: Request) {
     };
 
     // Bestätigungs-E-Mail an Nutzer
-    sendConfirmationEmail(emailData).catch((error) => {
+    sendConfirmationEmail({
+      ...emailData,
+      pandadocSigningUrl,
+    }).catch((error) => {
       console.error("Fehler beim Senden der Bestätigungs-E-Mail:", error);
     });
 

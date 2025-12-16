@@ -28,6 +28,10 @@ model Mandate {
   versicherungsnehmer           String?
   versicherungsnehmerVerhaeltnis String?
   status                        MandateStatus @default(NEU)
+  pandadocDocumentId            String?
+  pandadocSessionId              String?
+  signedVollmachtUrl             String?
+  vollmachtSignedAt              DateTime?
   createdAt                     DateTime      @default(now())
   updatedAt                     DateTime      @updatedAt
 

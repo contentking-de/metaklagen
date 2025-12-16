@@ -197,6 +197,44 @@ export default async function MandateDetailPage({ params }: PageProps) {
           </Card>
         </div>
 
+        {/* Signierte Vollmacht */}
+        {mandate.signedVollmachtUrl && (
+          <Card variant="elevated" padding="lg" className="mb-6">
+            <h2 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
+              <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Signierte Vollmacht
+            </h2>
+            <div className="space-y-3">
+              <p className="text-sm text-text-muted">
+                Die Vollmacht wurde am{" "}
+                {mandate.vollmachtSignedAt
+                  ? mandate.vollmachtSignedAt.toLocaleDateString("de-DE", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })
+                  : "unbekannt"}{" "}
+                digital signiert.
+              </p>
+              <a
+                href={mandate.signedVollmachtUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-accent hover:text-accent-dark font-medium"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+                Signierte Vollmacht öffnen
+              </a>
+            </div>
+          </Card>
+        )}
+
         {/* Status Update */}
         <Card variant="elevated" padding="lg" className="mb-6">
           <h2 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">

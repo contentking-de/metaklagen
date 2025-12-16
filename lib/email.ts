@@ -49,6 +49,7 @@ interface MandateEmailData {
   versicherungsAbschlussdatum?: string;
   versicherungsnehmer?: string;
   versicherungsnehmerVerhaeltnis?: string;
+  pandadocSigningUrl?: string;
 }
 
 export async function sendConfirmationEmail(data: MandateEmailData) {
@@ -93,6 +94,14 @@ export async function sendConfirmationEmail(data: MandateEmailData) {
                 <li>Vollmacht-Meta</li>
                 <li>Widerrufsbelehrung-Meta</li>
               </ul>
+              
+              ${data.pandadocSigningUrl ? `
+              <div style="background: #fff; border: 2px solid #c9a227; border-radius: 8px; padding: 20px; margin: 25px 0; text-align: center;">
+                <h2 style="color: #1e3a5f; font-size: 18px; margin-bottom: 15px;">Vollmacht digital unterschreiben</h2>
+                <p style="margin-bottom: 20px;">Bitte unterschreibe Deine Vollmacht jetzt digital. Der Vorgang dauert nur wenige Minuten:</p>
+                <a href="${data.pandadocSigningUrl}" style="display: inline-block; background: #c9a227; color: #1e3a5f; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">Jetzt Vollmacht unterschreiben</a>
+              </div>
+              ` : ""}
               
               <h2 style="color: #1e3a5f; font-size: 18px; margin-top: 25px; margin-bottom: 15px;">Und so geht es nun weiter:</h2>
               <p>Wir werden zunächst Deine Rechtsschutzversicherung kontaktieren, damit diese die Kosten für das Verfahren gegen Meta übernimmt. Nach erfolgter Deckungszusage werden wir beim zuständigen Gericht die Klage einreichen.</p>
