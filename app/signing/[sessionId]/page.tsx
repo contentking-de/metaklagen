@@ -40,12 +40,14 @@ export default function SigningPage() {
       try {
         // Erstelle Signing-Instanz mit Element-ID
         // WICHTIG: Region muss mit der API-Region übereinstimmen, über die die Session erstellt wurde
+        // Höhe wird vom Container-Style übernommen, hier setzen wir eine große Höhe
+        const containerHeight = Math.max(window.innerHeight - 180, 1200);
         const signing = new Signing(
           containerId,
           {
             sessionId: sessionId,
             width: "100%",
-            height: "calc(100vh - 200px)", // Nutze fast die volle Viewport-Höhe, lasse Platz für Header
+            height: `${containerHeight}px`, // Dynamische Höhe basierend auf Viewport
           },
           {
             region: region,
@@ -99,8 +101,8 @@ export default function SigningPage() {
   }, [sessionId, router]);
 
   return (
-    <div className="min-h-screen bg-background-alt flex flex-col items-center justify-center p-4">
-      <div className="max-w-4xl w-full">
+    <div className="min-h-screen bg-background-alt flex flex-col p-4">
+      <div className="max-w-7xl w-full mx-auto">
         <h1 className="text-2xl font-bold text-primary mb-6 text-center">
           Vollmacht digital unterschreiben
         </h1>
@@ -112,7 +114,7 @@ export default function SigningPage() {
         <div
           id={containerId}
           className="w-full bg-white rounded-lg shadow-lg"
-          style={{ minHeight: "calc(100vh - 200px)" }}
+          style={{ height: "calc(100vh - 180px)", minHeight: "1200px" }}
         />
       </div>
     </div>
