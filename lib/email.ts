@@ -1,6 +1,44 @@
 import { Resend } from "resend";
+import fs from "fs";
+import path from "path";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+
+/**
+ * Lädt PDF-Dateien aus dem public Ordner und konvertiert sie zu Base64 für E-Mail-Anhänge
+ */
+function getPdfAttachments() {
+  const publicPath = path.join(process.cwd(), "public");
+  
+  const pdfFiles = [
+    {
+      filename: "Mandanteninformationsblatt-Datenschutz.pdf",
+      path: path.join(publicPath, "Mandanteninformationsblatt-Datenschutz.pdf"),
+    },
+    {
+      filename: "Vollmacht-Meta.pdf",
+      path: path.join(publicPath, "Vollmacht-Meta.pdf"),
+    },
+    {
+      filename: "Widerrufsbelehrung-Meta.pdf",
+      path: path.join(publicPath, "Widerrufsbelehrung-Meta.pdf"),
+    },
+  ];
+
+  return pdfFiles.map((file) => {
+    try {
+      const fileBuffer = fs.readFileSync(file.path);
+      const base64Content = fileBuffer.toString("base64");
+      return {
+        filename: file.filename,
+        content: base64Content,
+      };
+    } catch (error) {
+      console.error(`Fehler beim Laden der PDF-Datei ${file.filename}:`, error);
+      return null;
+    }
+  }).filter((attachment): attachment is { filename: string; content: string } => attachment !== null);
+}
 
 interface MandateEmailData {
   vorname: string;
@@ -15,10 +53,14 @@ interface MandateEmailData {
 
 export async function sendConfirmationEmail(data: MandateEmailData) {
   try {
+    // PDF-Anhänge laden
+    const attachments = getPdfAttachments();
+
     await resend.emails.send({
       from: "META Datenschutzklage <noreply@meta-datenschutzklage.de>",
       to: data.email,
-      subject: "Bestätigung Ihrer Mandatserteilung - META Datenschutzklage",
+      subject: "Bestätigung Deiner Mandatserteilung - META Datenschutzklage",
+      attachments: attachments,
       html: `
         <!DOCTYPE html>
         <html>
@@ -41,16 +83,30 @@ export async function sendConfirmationEmail(data: MandateEmailData) {
               <div class="logo">§ META <span class="gold">Datenschutzklage</span></div>
             </div>
             <div class="content">
-              <h1>Vielen Dank für Ihre Mandatserteilung</h1>
-              <p>Sehr geehrte/r ${data.vorname} ${data.nachname},</p>
-              <p>wir haben Ihre Mandatserteilung erfolgreich erhalten und werden uns zeitnah bei Ihnen melden.</p>
-              ${data.versicherungsnummer ? `<p><strong>Ihre Versicherungsnummer:</strong> ${data.versicherungsnummer}</p>` : ""}
-              <p>Unser Team wird sich in den nächsten Werktagen mit Ihnen in Verbindung setzen, um die weiteren Schritte zu besprechen.</p>
-              <p>Bei Fragen stehen wir Ihnen gerne zur Verfügung.</p>
-              <p>Mit freundlichen Grüßen,<br>Ihr Team von META Datenschutzklage</p>
+              <h1>Vielen Dank für Deine Mandatserteilung</h1>
+              <p>Hallo ${data.vorname},</p>
+              <p>wir haben Deine Mandatserteilung erfolgreich erhalten und freuen uns, Dich bei Deinem Anspruch gegen Meta zu unterstützen.</p>
+              ${data.versicherungsnummer ? `<p><strong>Deine Versicherungsnummer:</strong> ${data.versicherungsnummer}</p>` : ""}
+              <p>Anbei findest Du wichtige Dokumente zu Deiner Mandatserteilung:</p>
+              <ul>
+                <li>Mandanteninformationsblatt-Datenschutz</li>
+                <li>Vollmacht-Meta</li>
+                <li>Widerrufsbelehrung-Meta</li>
+              </ul>
+              
+              <h2 style="color: #1e3a5f; font-size: 18px; margin-top: 25px; margin-bottom: 15px;">Und so geht es nun weiter:</h2>
+              <p>Wir werden zunächst Deine Rechtsschutzversicherung kontaktieren, damit diese die Kosten für das Verfahren gegen Meta übernimmt. Nach erfolgter Deckungszusage werden wir beim zuständigen Gericht die Klage einreichen.</p>
+              
+              <h2 style="color: #1e3a5f; font-size: 18px; margin-top: 25px; margin-bottom: 15px;">Verfahrensdauer</h2>
+              <p>Ein Verfahren in der 1. Instanz nimmt mindestens 6-8 Monate in Anspruch. In Einzelfällen, z.B. bei hoher Auslastung des Gerichts, kann es auch länger dauern. Es ist jedoch nicht davon auszugehen, dass das Verfahren in 1. Instanz rechtskräftig entschieden sein wird. Vielmehr wird die in 1. Instanz unterlegene Partei in der Regel Berufung einlegen. Auch in der Berufungsinstanz muss mit einer Verfahrensdauer von mindestens 6-8 Monaten gerechnet werden.</p>
+              
+              <p>Du wirst also Geduld benötigen, um Deinen Anspruch gegen Meta mit unserer Hilfe durchzusetzen. Positiv ist aber, dass Du Dich in dieser Zeit im Regelfall um nichts kümmern musst. Wir werden Dich ungefragt über alle wesentlichen Schritte auf dem Laufenden halten. Im Bedarfsfall kannst Du selbstverständlich auch immer Kontakt zu uns aufnehmen.</p>
+              
+              <p>Bei Fragen stehen wir Dir gerne zur Verfügung.</p>
+              <p>Mit freundlichen Grüßen,<br>Dein Team von META Datenschutzklage</p>
             </div>
             <div class="footer">
-              <p>Diese E-Mail wurde automatisch versendet. Bitte antworten Sie nicht direkt auf diese E-Mail.</p>
+              <p>Diese E-Mail wurde automatisch versendet. Bitte antworte nicht direkt auf diese E-Mail.</p>
               <p>© ${new Date().getFullYear()} META Datenschutzklage | meta-datenschutzklage.de</p>
             </div>
           </div>
