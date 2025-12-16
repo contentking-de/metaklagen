@@ -57,6 +57,11 @@ export async function sendConfirmationEmail(data: MandateEmailData) {
     // PDF-Anhänge laden
     const attachments = getPdfAttachments();
 
+    // Debug-Logging
+    console.log("E-Mail wird gesendet mit folgenden Daten:");
+    console.log("  - E-Mail:", data.email);
+    console.log("  - PandaDoc Signing URL:", data.pandadocSigningUrl || "NICHT GESETZT");
+
     await resend.emails.send({
       from: "META Datenschutzklage <noreply@meta-datenschutzklage.de>",
       to: data.email,
