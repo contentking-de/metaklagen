@@ -19,7 +19,15 @@ export default function SigningPage() {
     }
 
     console.log("Initialisiere PandaDoc Signing mit Session-ID:", sessionId);
-    console.log("Region:", process.env.NEXT_PUBLIC_PANDADOC_REGION || "com");
+    
+    // WICHTIG: Sessions, die über api.pandadoc.com erstellt wurden, sind für die COM-Region
+    // Da wir immer api.pandadoc.com verwenden (keine separate EU-API existiert),
+    // müssen wir die Region auf 'com' setzen, damit die Session gefunden wird
+    // Die Region wird auf 'com' gesetzt, unabhängig von NEXT_PUBLIC_PANDADOC_REGION,
+    // da die Session über api.pandadoc.com erstellt wurde
+    const region: "com" | "eu" = "com";
+    console.log("Region:", region);
+    console.log("HINWEIS: Session wurde über api.pandadoc.com erstellt, daher Region 'com'");
 
     // Warte kurz, damit das DOM-Element verfügbar ist
     const timer = setTimeout(() => {
@@ -31,6 +39,7 @@ export default function SigningPage() {
 
       try {
         // Erstelle Signing-Instanz mit Element-ID
+        // WICHTIG: Region muss mit der API-Region übereinstimmen, über die die Session erstellt wurde
         const signing = new Signing(
           containerId,
           {
@@ -39,7 +48,7 @@ export default function SigningPage() {
             height: "800px",
           },
           {
-            region: (process.env.NEXT_PUBLIC_PANDADOC_REGION as "com" | "eu") || "eu",
+            region: region,
           }
         );
 

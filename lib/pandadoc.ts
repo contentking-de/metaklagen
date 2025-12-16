@@ -7,12 +7,15 @@ import fs from "fs";
 import path from "path";
 
 const PANDADOC_API_KEY = process.env.PANDADOC_API_KEY;
-// API-URL ist immer die gleiche, unabhängig von der Region
-// Die Region wird nur für das Frontend Signing SDK verwendet
+// API-URL ist immer api.pandadoc.com (keine separate EU-API)
+// ABER: Sessions sind regionsspezifisch!
+// Wenn NEXT_PUBLIC_PANDADOC_REGION='eu' ist, muss die Frontend-Region 'eu' sein
+// Wenn NEXT_PUBLIC_PANDADOC_REGION='com' ist, muss die Frontend-Region 'com' sein
 const PANDADOC_REGION = process.env.NEXT_PUBLIC_PANDADOC_REGION || "com";
 const PANDADOC_API_URL = process.env.PANDADOC_API_URL || "https://api.pandadoc.com/public/v1";
 
 console.log(`PandaDoc Konfiguration: Region=${PANDADOC_REGION}, API_URL=${PANDADOC_API_URL}`);
+console.log(`WICHTIG: Frontend-Region muss mit NEXT_PUBLIC_PANDADOC_REGION übereinstimmen!`);
 
 interface CreateDocumentFromPdfParams {
   name: string;
