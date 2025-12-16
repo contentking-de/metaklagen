@@ -7,6 +7,7 @@ import { Logo, Card, Button } from "@/components/ui";
 import AdminLogoutButton from "@/components/admin/LogoutButton";
 import MandateStatusBadge from "@/components/admin/StatusBadge";
 import StatusUpdateForm from "@/components/admin/StatusUpdateForm";
+import { getDocumentStatus } from "@/lib/pandadoc";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +30,40 @@ export default async function MandateDetailPage({ params }: PageProps) {
 
   if (!mandate) {
     notFound();
+  }
+
+  // Prüfe Dokumentstatus von PandaDoc, wenn pandadocDocumentId vorhanden ist
+  let isDocumentCompleted = false;
+  if (mandate.pandadocDocumentId && !mandate.vollmachtSignedAt) {
+    try {
+      const docStatus = await getDocumentStatus(mandate.pandadocDocumentId);
+      isDocumentCompleted = docStatus.status === "document.completed";
+      
+      // Wenn Dokument signiert ist, aber vollmachtSignedAt nicht gesetzt, aktualisiere es
+      if (isDocumentCompleted) {
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+        const vollmachtDownloadUrl = `${baseUrl}/api/admin/mandate/${mandate.id}/vollmacht`;
+        
+        await prisma.mandate.update({
+          where: { id: mandate.id },
+          data: {
+            signedVollmachtUrl: vollmachtDownloadUrl,
+            vollmachtSignedAt: new Date(), // Verwende aktuelles Datum, da wir das echte Datum nicht kennen
+          },
+        });
+        
+        // Lade Mandat neu, um aktualisierte Daten zu haben
+        const updatedMandate = await prisma.mandate.findUnique({
+          where: { id },
+        });
+        if (updatedMandate) {
+          Object.assign(mandate, updatedMandate);
+        }
+      }
+    } catch (error) {
+      console.error("Fehler beim Abrufen des Dokumentstatus:", error);
+      // Ignoriere Fehler und verwende vorhandene Daten
+    }
   }
 
   return (
@@ -198,7 +233,7 @@ export default async function MandateDetailPage({ params }: PageProps) {
         </div>
 
         {/* Signierte Vollmacht */}
-        {mandate.vollmachtSignedAt ? (
+        {(mandate.vollmachtSignedAt || isDocumentCompleted) ? (
           <Card variant="elevated" padding="lg" className="mb-6 border-2 border-success/20">
             <h2 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
               <svg className="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">

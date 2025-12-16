@@ -6,6 +6,7 @@ import prisma from "@/lib/db";
 import { Logo, Card, Button } from "@/components/ui";
 import AdminLogoutButton from "@/components/admin/LogoutButton";
 import MandateStatusBadge from "@/components/admin/StatusBadge";
+import { getDocumentStatus } from "@/lib/pandadoc";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +20,35 @@ export default async function AdminDashboardPage() {
   const mandates = await prisma.mandate.findMany({
     orderBy: { createdAt: "desc" },
   });
+
+  // Prüfe Status für Mandate ohne vollmachtSignedAt aber mit pandadocDocumentId
+  // Aktualisiere diese in der Datenbank, wenn sie signiert sind
+  for (const mandate of mandates) {
+    if (mandate.pandadocDocumentId && !mandate.vollmachtSignedAt) {
+      try {
+        const docStatus = await getDocumentStatus(mandate.pandadocDocumentId);
+        if (docStatus.status === "document.completed") {
+          const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+          const vollmachtDownloadUrl = `${baseUrl}/api/admin/mandate/${mandate.id}/vollmacht`;
+          
+          await prisma.mandate.update({
+            where: { id: mandate.id },
+            data: {
+              signedVollmachtUrl: vollmachtDownloadUrl,
+              vollmachtSignedAt: new Date(),
+            },
+          });
+          
+          // Aktualisiere lokales Objekt
+          mandate.vollmachtSignedAt = new Date();
+          mandate.signedVollmachtUrl = vollmachtDownloadUrl;
+        }
+      } catch (error) {
+        console.error(`Fehler beim Prüfen des Status für Mandat ${mandate.id}:`, error);
+        // Ignoriere Fehler und verwende vorhandene Daten
+      }
+    }
+  }
 
   const stats = {
     total: mandates.length,
