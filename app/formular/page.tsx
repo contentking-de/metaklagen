@@ -301,18 +301,17 @@ export default function FormularPage() {
                         <Input
                           label="Versicherungsnummer"
                           placeholder="z.B. RSV-123456789"
-                          required
                           {...register("versicherungsnummer")}
                           error={errors.versicherungsnummer?.message}
-                          hint="Findest Du auf Deiner Versicherungspolice"
+                          hint="Optional - Findest Du auf Deiner Versicherungspolice"
                         />
                         <Input
                           label="Abschlussdatum der Versicherung"
                           type="date"
-                          required
                           max={today}
                           {...register("versicherungsAbschlussdatum")}
                           error={errors.versicherungsAbschlussdatum?.message}
+                          hint="Optional"
                         />
                         <div className="mt-4">
                           <label className="flex items-center gap-3 cursor-pointer group">
