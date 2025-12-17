@@ -42,7 +42,7 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in stagger-3">
               <Link href="/formular">
                 <Button variant="primary" size="lg" className="animate-pulse-glow">
-                  Jetzt Mandat erteilen
+                  Schadenersatz fordern
                   <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                   </svg>
@@ -396,7 +396,7 @@ export default function HomePage() {
           </p>
           <Link href="/formular">
             <Button variant="primary" size="lg" className="bg-accent hover:bg-accent-dark text-primary">
-              Jetzt Mandat erteilen
+              Schadenersatz fordern
               <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>

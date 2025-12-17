@@ -65,7 +65,7 @@ export async function sendConfirmationEmail(data: MandateEmailData) {
     await resend.emails.send({
       from: "META Datenschutzklage <noreply@meta-datenschutzklage.de>",
       to: data.email,
-      subject: "Bestätigung Deiner Mandatserteilung - META Datenschutzklage",
+      subject: "Bestätigung Deiner Einsendung - META Datenschutzklage",
       attachments: attachments,
       html: `
         <!DOCTYPE html>
@@ -89,9 +89,9 @@ export async function sendConfirmationEmail(data: MandateEmailData) {
               <div class="logo">§ META <span class="gold">Datenschutzklage</span></div>
             </div>
             <div class="content">
-              <h1>Vielen Dank für Deine Mandatserteilung</h1>
+              <h1>Vielen Dank für Deine Einsendung</h1>
               <p>Hallo ${data.vorname},</p>
-              <p>wir haben Deine Mandatserteilung erfolgreich erhalten und freuen uns, Dich bei Deinem Anspruch gegen Meta zu unterstützen.</p>
+              <p>wir haben Deine Daten erfolgreich erhalten und freuen uns, Dich bei Deinem Anspruch gegen Meta zu unterstützen. Das Mandat erteilst Du erst mit der Signatur der Vollmacht.</p>
               ${data.versicherungsnummer ? `<p><strong>Deine Versicherungsnummer:</strong> ${data.versicherungsnummer}</p>` : ""}
               <p>Anbei findest Du wichtige Dokumente zu Deiner Mandatserteilung:</p>
               <ul>

@@ -90,7 +90,7 @@ export default function FormularPage() {
           {/* Header */}
           <div className="text-center mb-10">
             <h1 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              Mandat erteilen
+              Schadenersatz fordern
             </h1>
             <p className="text-text-muted text-lg">
               Fülle das Formular aus, um uns mit Deiner Datenschutzklage gegen META zu beauftragen.
@@ -421,7 +421,7 @@ export default function FormularPage() {
                     disabled={!agbAccepted}
                     className={!agbAccepted ? "opacity-50 cursor-not-allowed" : ""}
                   >
-                    {hatRechtschutz === false ? "Weiter zu meta-klage.de" : "Mandat erteilen"}
+                    {hatRechtschutz === false ? "Weiter zu meta-klage.de" : "Schadenersatz fordern"}
                     <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>

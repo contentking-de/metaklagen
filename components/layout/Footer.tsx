@@ -69,7 +69,7 @@ export default function Footer() {
                   href="/formular"
                   className="text-white/70 hover:text-accent transition-colors"
                 >
-                  Mandat erteilen
+                  Schadenersatz fordern
                 </Link>
               </li>
               <li>

@@ -50,7 +50,7 @@ export default function Header() {
             </Link>
             <Link href="/formular">
               <Button variant="primary" size="sm">
-                Jetzt Mandat erteilen
+                Schadenersatz fordern
               </Button>
             </Link>
           </nav>
@@ -127,7 +127,7 @@ export default function Header() {
               </Link>
               <Link href="/formular" onClick={() => setIsMenuOpen(false)}>
                 <Button variant="primary" size="md" className="w-full">
-                  Jetzt Mandat erteilen
+                  Schadenersatz fordern
                 </Button>
               </Link>
             </nav>
