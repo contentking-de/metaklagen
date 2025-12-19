@@ -55,13 +55,28 @@ model Partner {
   id          String    @id @default(cuid())
   name        String
   trackingId  String    @unique
-  email       String?
+  email       String?   @unique
   active      Boolean   @default(true)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   mandates    Mandate[]
+  tokens      PartnerToken[]
 
   @@map("partners")
+}
+
+model PartnerToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  partnerId String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  partner   Partner  @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+
+  @@map("partner_tokens")
+  @@index([token])
+  @@index([partnerId])
 }
 
 enum MandateStatus {

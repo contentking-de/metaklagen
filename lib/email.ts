@@ -135,6 +135,69 @@ export async function sendConfirmationEmail(data: MandateEmailData) {
   }
 }
 
+export async function sendPartnerMagicLink(email: string, magicLink: string, partnerName: string) {
+  try {
+    await resend.emails.send({
+      from: "META Datenschutzklage <noreply@meta-datenschutzklage.de>",
+      to: email,
+      subject: "Dein Login-Link für das Partner-Dashboard",
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; line-height: 1.6; color: #1e3a5f; }
+            .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
+            .header { text-align: center; margin-bottom: 30px; }
+            .logo { font-size: 24px; font-weight: bold; color: #1e3a5f; }
+            .gold { color: #c9a227; }
+            .content { background: #f8f9fa; padding: 30px; border-radius: 8px; }
+            h1 { color: #1e3a5f; font-size: 22px; margin-bottom: 20px; }
+            .button { display: inline-block; background: #c9a227; color: #1e3a5f; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px; margin: 20px 0; }
+            .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #666; }
+            .warning { background: #fff3cd; border: 1px solid #ffc107; padding: 15px; border-radius: 6px; margin: 20px 0; font-size: 14px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <div class="logo">§ META <span class="gold">Datenschutzklage</span></div>
+            </div>
+            <div class="content">
+              <h1>Login-Link für Partner-Dashboard</h1>
+              <p>Hallo ${partnerName},</p>
+              <p>Du hast einen Login-Link für Dein Partner-Dashboard angefordert. Klicke auf den Button unten, um Dich anzumelden:</p>
+              
+              <div style="text-align: center;">
+                <a href="${magicLink}" class="button">Zum Partner-Dashboard</a>
+              </div>
+              
+              <div class="warning">
+                <strong>Wichtig:</strong> Dieser Link ist nur für 1 Stunde gültig und kann nur einmal verwendet werden.
+              </div>
+              
+              <p>Falls Du den Button nicht anklicken kannst, kopiere diesen Link in Deinen Browser:</p>
+              <p style="word-break: break-all; font-size: 12px; color: #666;">${magicLink}</p>
+              
+              <p>Falls Du diesen Login-Link nicht angefordert hast, kannst Du diese E-Mail ignorieren.</p>
+            </div>
+            <div class="footer">
+              <p>Diese E-Mail wurde automatisch versendet. Bitte antworte nicht direkt auf diese E-Mail.</p>
+              <p>© ${new Date().getFullYear()} META Datenschutzklage | www.meta-datenschutzklage.de</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Fehler beim Senden des Magic Link:", error);
+    return { success: false, error };
+  }
+}
+
 export async function sendKanzleiNotification(data: MandateEmailData & {
   telefon?: string;
   adresse: string;
