@@ -18,13 +18,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: "META Datenschutzklage | Ihre Rechte durchsetzen",
     description: "Kostenlose Vertretung bei Datenschutzklagen gegen META. Holen Sie sich bis zu 10.000€ Schadensersatz.",
-    url: "https://meta-datenschutzklage.de",
+    url: "https://www.meta-datenschutzklage.de",
     siteName: "META Datenschutzklage",
     locale: "de_DE",
     type: "website",
     images: [
       {
-        url: "https://meta-datenschutzklage.de/meta-datenschutzklage.jpg",
+        url: "https://www.meta-datenschutzklage.de/meta-datenschutzklage.jpg",
         width: 1200,
         height: 630,
         alt: "META Datenschutzklage - Bis zu 10.000€ Schadensersatz",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "META Datenschutzklage | Ihre Rechte durchsetzen",
     description: "Kostenlose Vertretung bei Datenschutzklagen gegen META. Holen Sie sich bis zu 10.000€ Schadensersatz.",
-    images: ["https://meta-datenschutzklage.de/meta-datenschutzklage.jpg"],
+    images: ["https://www.meta-datenschutzklage.de/meta-datenschutzklage.jpg"],
   },
   robots: {
     index: true,

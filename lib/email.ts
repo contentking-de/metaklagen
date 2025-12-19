@@ -121,7 +121,7 @@ export async function sendConfirmationEmail(data: MandateEmailData) {
             </div>
             <div class="footer">
               <p>Diese E-Mail wurde automatisch versendet. Bitte antworte nicht direkt auf diese E-Mail.</p>
-              <p>© ${new Date().getFullYear()} META Datenschutzklage | meta-datenschutzklage.de</p>
+              <p>© ${new Date().getFullYear()} META Datenschutzklage | www.meta-datenschutzklage.de</p>
             </div>
           </div>
         </body>

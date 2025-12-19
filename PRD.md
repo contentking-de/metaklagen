@@ -281,7 +281,7 @@ KANZLEI_EMAIL          # E-Mail für Benachrichtigungen
 
 ### 9.1 Hosting
 - **Platform**: Vercel
-- **Domain**: meta-datenschutzklage.de
+- **Domain**: www.meta-datenschutzklage.de
 - **SSL**: Automatisch via Vercel
 
 ### 9.2 CI/CD
