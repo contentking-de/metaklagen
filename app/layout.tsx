@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   keywords: ["META", "Datenschutz", "Klage", "DSGVO", "Facebook", "Instagram", "Schadensersatz", "Anwalt"],
   authors: [{ name: "META Datenschutzklage" }],
   openGraph: {
-    title: "META Datenschutzklage | Ihre Rechte durchsetzen",
+    title: "Bis zu 10.000 € Schadenersatz möglich",
     description: "Kostenlose Vertretung bei Datenschutzklagen gegen META. Holen Sie sich bis zu 10.000€ Schadensersatz.",
     url: "https://www.meta-datenschutzklage.de",
     siteName: "META Datenschutzklage",
