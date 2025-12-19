@@ -32,8 +32,11 @@ model Mandate {
   pandadocSessionId              String?
   signedVollmachtUrl             String?
   vollmachtSignedAt              DateTime?
+  partnerId                      String?
+  referrer                      String?
   createdAt                     DateTime      @default(now())
   updatedAt                     DateTime      @updatedAt
+  partner                       Partner?      @relation(fields: [partnerId], references: [id], onDelete: SetNull)
 
   @@map("mandates")
 }
@@ -46,6 +49,19 @@ model AdminUser {
   createdAt    DateTime @default(now())
 
   @@map("admin_users")
+}
+
+model Partner {
+  id          String    @id @default(cuid())
+  name        String
+  trackingId  String    @unique
+  email       String?
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  mandates    Mandate[]
+
+  @@map("partners")
 }
 
 enum MandateStatus {

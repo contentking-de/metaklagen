@@ -68,6 +68,12 @@ export default async function AdminDashboardPage() {
               <span className="font-semibold">Admin Dashboard</span>
             </div>
             <div className="flex items-center gap-4">
+              <Link
+                href="/admin/partner"
+                className="text-white/70 hover:text-white text-sm transition-colors"
+              >
+                Partner-Statistiken
+              </Link>
               <span className="text-white/70 text-sm">{session.user?.email}</span>
               <Link
                 href="/admin/passwort"
@@ -82,6 +88,23 @@ export default async function AdminDashboardPage() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Quick Links */}
+        <div className="mb-6">
+          <Link href="/admin/partner">
+            <Card variant="elevated" padding="md" className="hover:shadow-lg transition-shadow cursor-pointer">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-text-muted text-sm mb-1">Partner-Tracking</div>
+                  <div className="text-lg font-semibold text-primary">Conversion-Tracking verwalten</div>
+                </div>
+                <svg className="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+            </Card>
+          </Link>
+        </div>
+
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card variant="elevated" padding="md">

@@ -1,17 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Header, Footer } from "@/components/layout";
 import { Button, Input, Card } from "@/components/ui";
 import { mandateFormSchema, MandateFormData } from "@/lib/validations";
 import { gtag_report_conversion } from "@/lib/googleAds";
 
-export default function FormularPage() {
+function FormularContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [agbAccepted, setAgbAccepted] = useState(false);
@@ -24,11 +25,34 @@ export default function FormularPage() {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
     trigger,
   } = useForm<MandateFormData>({
     resolver: zodResolver(mandateFormSchema),
   });
+
+  // URL-Parameter lesen und Partner-ID speichern
+  useEffect(() => {
+    // Partner-ID aus URL-Parameter lesen
+    const partnerId = searchParams.get("partner");
+    if (partnerId) {
+      // In localStorage speichern (für die gesamte Session)
+      localStorage.setItem("partnerId", partnerId);
+      setValue("partnerId", partnerId);
+    } else {
+      // Falls keine Partner-ID in URL, aus localStorage laden (falls vorhanden)
+      const storedPartnerId = localStorage.getItem("partnerId");
+      if (storedPartnerId) {
+        setValue("partnerId", storedPartnerId);
+      }
+    }
+
+    // Referrer speichern (falls vorhanden)
+    if (typeof window !== "undefined" && document.referrer) {
+      setValue("referrer", document.referrer);
+    }
+  }, [searchParams, setValue]);
 
   const hatRechtschutz = watch("hatRechtschutz");
 
@@ -62,17 +86,28 @@ export default function FormularPage() {
     setIsSubmitting(true);
 
     try {
+      // Partner-ID aus localStorage holen, falls nicht im Formular
+      const partnerId = data.partnerId || localStorage.getItem("partnerId") || undefined;
+      const referrer = data.referrer || (typeof window !== "undefined" ? document.referrer : undefined);
+
       const response = await fetch("/api/mandate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          partnerId,
+          referrer,
+        }),
       });
 
       if (!response.ok) {
         throw new Error("Fehler beim Absenden");
       }
+
+      // Partner-ID aus localStorage entfernen nach erfolgreichem Absenden
+      localStorage.removeItem("partnerId");
 
       // Report conversion before redirecting to confirmation page
       gtag_report_conversion();
@@ -461,6 +496,24 @@ export default function FormularPage() {
 
       <Footer />
     </main>
+  );
+}
+
+export default function FormularPage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen bg-background-alt">
+        <Header />
+        <section className="pt-28 pb-20 md:pt-32 md:pb-24">
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center text-text-muted">Lade Formular...</div>
+          </div>
+        </section>
+        <Footer />
+      </main>
+    }>
+      <FormularContent />
+    </Suspense>
   );
 }
 

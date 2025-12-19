@@ -39,6 +39,8 @@ export const mandateFormSchema = z.object({
   versicherungsnehmer: z.string().optional(),
   versicherungsnehmerAbweichend: z.boolean().optional(),
   versicherungsnehmerVerhaeltnis: z.string().optional(),
+  partnerId: z.string().optional(),
+  referrer: z.string().optional(),
 }).refine(
   (data) => data.instagramAccountDatum || data.facebookAccountDatum,
   {

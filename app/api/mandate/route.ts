@@ -19,6 +19,25 @@ export async function POST(request: Request) {
       );
     }
 
+    // Partner-ID validieren (falls vorhanden)
+    let partnerId: string | null = null;
+    if (validatedData.partnerId) {
+      // Suche Partner nach trackingId (nicht nach ID)
+      const partner = await prisma.partner.findFirst({
+        where: {
+          trackingId: validatedData.partnerId,
+          active: true,
+        },
+      });
+      
+      if (partner) {
+        partnerId = partner.id;
+      } else {
+        console.warn(`Partner mit trackingId "${validatedData.partnerId}" nicht gefunden oder inaktiv`);
+        // Partner-ID wird nicht gespeichert, aber Fehler wird nicht geworfen
+      }
+    }
+
     // Erstelle Mandat in der Datenbank
     const mandate = await prisma.mandate.create({
       data: {
@@ -43,6 +62,8 @@ export async function POST(request: Request) {
           : null,
         versicherungsnehmer: validatedData.versicherungsnehmer || null,
         versicherungsnehmerVerhaeltnis: validatedData.versicherungsnehmerVerhaeltnis || null,
+        partnerId: partnerId,
+        referrer: validatedData.referrer || null,
         status: "NEU",
       },
     });
