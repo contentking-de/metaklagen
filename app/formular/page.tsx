@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Header, Footer } from "@/components/layout";
 import { Button, Input, Card } from "@/components/ui";
 import { mandateFormSchema, MandateFormData } from "@/lib/validations";
+import { gtag_report_conversion } from "@/lib/googleAds";
 
 export default function FormularPage() {
   const router = useRouter();
@@ -53,7 +54,8 @@ export default function FormularPage() {
   const onSubmit = async (data: MandateFormData) => {
     // Wenn keine Rechtschutzversicherung → Weiterleitung
     if (!data.hatRechtschutz) {
-      window.location.href = "https://meta-klage.de";
+      // Report conversion before redirect
+      gtag_report_conversion("https://meta-klage.de");
       return;
     }
 
@@ -72,11 +74,14 @@ export default function FormularPage() {
         throw new Error("Fehler beim Absenden");
       }
 
+      // Report conversion before redirecting to confirmation page
+      gtag_report_conversion();
+      
+      // Redirect to confirmation page
       router.push("/bestaetigung");
     } catch (error) {
       console.error("Fehler:", error);
       alert("Es ist ein Fehler aufgetreten. Bitte versuche es erneut.");
-    } finally {
       setIsSubmitting(false);
     }
   };

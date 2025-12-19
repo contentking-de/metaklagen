@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
 import CookieConsent from "@/components/CookieConsent";
+import GoogleAds from "@/components/GoogleAds";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -52,6 +53,7 @@ export default function RootLayout({
       <body className={`${dmSans.variable} font-sans antialiased`}>
         {children}
         <CookieConsent />
+        <GoogleAds />
       </body>
     </html>
   );

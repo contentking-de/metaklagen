@@ -29,6 +29,11 @@ export default function CookieConsent() {
     setShowBanner(false);
     setHasConsent(true);
 
+    // Dispatch custom event to notify other components about consent change
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("cookieConsentUpdated"));
+    }
+
     // Here you would typically initialize analytics/tracking if type === "all"
     if (type === "all") {
       // Initialize optional cookies/analytics
