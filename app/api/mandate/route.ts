@@ -126,11 +126,14 @@ export async function POST(request: Request) {
     }
 
     // Bestätigungs-E-Mail an Nutzer (nach PandaDoc-Erstellung)
+    console.log(`[E-Mail] Prüfe RESEND_API_KEY...`);
+    console.log(`[E-Mail] RESEND_API_KEY vorhanden: ${!!process.env.RESEND_API_KEY}`);
+    
     if (!process.env.RESEND_API_KEY) {
       console.warn("RESEND_API_KEY ist nicht gesetzt - E-Mail-Versand wird übersprungen");
     } else {
       try {
-        console.log(`Sende Bestätigungs-E-Mail an ${mandate.email}${pandadocSigningUrl ? " (mit PandaDoc-Link)" : " (ohne PandaDoc-Link)"}`);
+        console.log(`[E-Mail] Starte E-Mail-Versand an ${mandate.email}${pandadocSigningUrl ? " (mit PandaDoc-Link)" : " (ohne PandaDoc-Link)"}`);
         await sendConfirmationEmail({
           ...emailData,
           pandadocSigningUrl,
