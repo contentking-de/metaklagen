@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/db";
-import { Logo, Card, Button } from "@/components/ui";
+import { Logo, Card } from "@/components/ui";
 import AdminLogoutButton from "@/components/admin/LogoutButton";
 import MandateStatusBadge from "@/components/admin/StatusBadge";
 import { getDocumentStatus } from "@/lib/pandadoc";
@@ -171,21 +171,20 @@ export default async function AdminDashboardPage() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
                       Datum
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
-                      Aktion
-                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {mandates.map((mandate) => (
                     <tr key={mandate.id} className="hover:bg-background-alt/50">
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="font-medium text-primary">
-                          {mandate.vorname} {mandate.nachname}
-                        </div>
-                        <div className="text-sm text-text-muted">
-                          {mandate.wohnort}
-                        </div>
+                        <Link href={`/admin/mandate/${mandate.id}`} className="block hover:opacity-80 transition-opacity">
+                          <div className="font-medium text-primary">
+                            {mandate.vorname} {mandate.nachname}
+                          </div>
+                          <div className="text-sm text-text-muted">
+                            {mandate.wohnort}
+                          </div>
+                        </Link>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-text-muted">
                         {mandate.email}
@@ -233,13 +232,6 @@ export default async function AdminDashboardPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-text-muted">
                         {mandate.createdAt.toLocaleDateString("de-DE")}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <Link href={`/admin/mandate/${mandate.id}`}>
-                          <Button variant="ghost" size="sm">
-                            Details
-                          </Button>
-                        </Link>
                       </td>
                     </tr>
                   ))}
