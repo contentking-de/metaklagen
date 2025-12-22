@@ -288,3 +288,82 @@ export async function sendKanzleiNotification(data: MandateEmailData & {
   }
 }
 
+export async function sendVollmachtReminder(data: {
+  vorname: string;
+  nachname: string;
+  email: string;
+  pandadocSigningUrl: string;
+}) {
+  if (!RESEND_API_KEY || !resend) {
+    throw new Error("RESEND_API_KEY ist nicht gesetzt - E-Mail kann nicht gesendet werden");
+  }
+
+  try {
+    const result = await resend.emails.send({
+      from: "META Datenschutzklage <noreply@meta-datenschutzklage.de>",
+      to: data.email,
+      subject: "Erinnerung: Bitte unterschreibe Deine Vollmacht - META Datenschutzklage",
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; line-height: 1.6; color: #1e3a5f; }
+            .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
+            .header { text-align: center; margin-bottom: 30px; }
+            .logo { font-size: 24px; font-weight: bold; color: #1e3a5f; }
+            .gold { color: #c9a227; }
+            .content { background: #f8f9fa; padding: 30px; border-radius: 8px; }
+            h1 { color: #1e3a5f; font-size: 22px; margin-bottom: 20px; }
+            .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #666; }
+            .button { display: inline-block; background: #c9a227; color: #1e3a5f; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px; margin: 20px 0; }
+            .reminder-box { background: #fff; border: 2px solid #c9a227; border-radius: 8px; padding: 20px; margin: 25px 0; text-align: center; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <div class="logo">§ META <span class="gold">Datenschutzklage</span></div>
+            </div>
+            <div class="content">
+              <h1>Erinnerung: Vollmacht noch nicht signiert</h1>
+              <p>Hallo ${data.vorname},</p>
+              <p>wir möchten Dich daran erinnern, dass Du Deine Vollmacht für die Datenschutzklage gegen Meta noch nicht signiert hast. Um mit Deinem Anspruch fortfahren zu können, benötigen wir Deine Unterschrift.</p>
+              
+              <div class="reminder-box">
+                <h2 style="color: #1e3a5f; font-size: 18px; margin-bottom: 15px;">Vollmacht jetzt digital unterschreiben</h2>
+                <p style="margin-bottom: 20px;">Der Vorgang dauert nur wenige Minuten:</p>
+                <a href="${data.pandadocSigningUrl}" class="button">Jetzt Vollmacht unterschreiben</a>
+              </div>
+              
+              <p>Falls Du den Button nicht anklicken kannst, kopiere diesen Link in Deinen Browser:</p>
+              <p style="word-break: break-all; font-size: 12px; color: #666; background: #fff; padding: 10px; border-radius: 4px;">${data.pandadocSigningUrl}</p>
+              
+              <p>Nach der Signatur können wir mit Deiner Rechtsschutzversicherung Kontakt aufnehmen und die Klage einreichen.</p>
+              
+              <p>Bei Fragen stehen wir Dir gerne zur Verfügung.</p>
+              <p>Mit freundlichen Grüßen,<br>Dein Team von META Datenschutzklage</p>
+            </div>
+            <div class="footer">
+              <p>Diese E-Mail wurde automatisch versendet. Bitte antworte nicht direkt auf diese E-Mail.</p>
+              <p>© ${new Date().getFullYear()} META Datenschutzklage | www.meta-datenschutzklage.de</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `,
+    });
+
+    if (result.error) {
+      throw new Error(`Resend API Fehler: ${JSON.stringify(result.error)}`);
+    }
+
+    console.log(`✓ Reminder-E-Mail erfolgreich gesendet an ${data.email}`);
+    return { success: true };
+  } catch (error) {
+    console.error("Fehler beim Senden der Reminder-E-Mail:", error);
+    throw error;
+  }
+}
+

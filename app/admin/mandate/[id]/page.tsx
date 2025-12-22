@@ -7,6 +7,7 @@ import { Logo, Card, Button } from "@/components/ui";
 import AdminLogoutButton from "@/components/admin/LogoutButton";
 import MandateStatusBadge from "@/components/admin/StatusBadge";
 import StatusUpdateForm from "@/components/admin/StatusUpdateForm";
+import ReminderButton from "@/components/admin/ReminderButton";
 import { getDocumentStatus } from "@/lib/pandadoc";
 
 export const dynamic = "force-dynamic";
@@ -294,11 +295,16 @@ export default async function MandateDetailPage({ params }: PageProps) {
               </svg>
               Signierte Vollmacht
             </h2>
-            <div className="flex items-center gap-2 text-sm text-text-muted">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              Vollmacht wurde noch nicht signiert
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-sm text-text-muted">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Vollmacht wurde noch nicht signiert
+              </div>
+              {mandate.pandadocDocumentId && (
+                <ReminderButton mandateId={mandate.id} />
+              )}
             </div>
           </Card>
         )}
