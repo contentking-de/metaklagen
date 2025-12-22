@@ -108,7 +108,7 @@ export async function sendConfirmationEmail(data: MandateEmailData) {
               ${data.pandadocSigningUrl ? `
               <div style="background: #fff; border: 2px solid #c9a227; border-radius: 8px; padding: 20px; margin: 25px 0; text-align: center;">
                 <h2 style="color: #1e3a5f; font-size: 18px; margin-bottom: 15px;">Vollmacht digital unterschreiben</h2>
-                <p style="margin-bottom: 20px;">Bitte unterschreibe Deine Vollmacht jetzt digital. Der Vorgang dauert nur wenige Minuten:</p>
+                <p style="margin-bottom: 20px;">Bitte unterschreibe Deine Vollmacht jetzt digital. Der Vorgang dauert nur wenige Sekunden:</p>
                 <a href="${data.pandadocSigningUrl}" style="display: inline-block; background: #c9a227; color: #1e3a5f; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">Jetzt Vollmacht unterschreiben</a>
               </div>
               ` : ""}
@@ -333,7 +333,7 @@ export async function sendVollmachtReminder(data: {
               
               <div class="reminder-box">
                 <h2 style="color: #1e3a5f; font-size: 18px; margin-bottom: 15px;">Vollmacht jetzt digital unterschreiben</h2>
-                <p style="margin-bottom: 20px;">Der Vorgang dauert nur wenige Minuten:</p>
+                <p style="margin-bottom: 20px;">Der Vorgang dauert nur wenige Sekunden:</p>
                 <a href="${data.pandadocSigningUrl}" class="button">Jetzt Vollmacht unterschreiben</a>
               </div>
               
