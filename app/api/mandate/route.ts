@@ -126,31 +126,54 @@ export async function POST(request: Request) {
     }
 
     // Bestätigungs-E-Mail an Nutzer (nach PandaDoc-Erstellung)
-    console.log(`Sende Bestätigungs-E-Mail an ${mandate.email}${pandadocSigningUrl ? " (mit PandaDoc-Link)" : " (ohne PandaDoc-Link)"}`);
-    sendConfirmationEmail({
-      ...emailData,
-      pandadocSigningUrl,
-    }).catch((error) => {
-      console.error("✗ Fehler beim Senden der Bestätigungs-E-Mail:", error);
-    });
+    if (!process.env.RESEND_API_KEY) {
+      console.warn("RESEND_API_KEY ist nicht gesetzt - E-Mail-Versand wird übersprungen");
+    } else {
+      try {
+        console.log(`Sende Bestätigungs-E-Mail an ${mandate.email}${pandadocSigningUrl ? " (mit PandaDoc-Link)" : " (ohne PandaDoc-Link)"}`);
+        await sendConfirmationEmail({
+          ...emailData,
+          pandadocSigningUrl,
+        });
+        console.log(`✓ Bestätigungs-E-Mail erfolgreich gesendet an ${mandate.email}`);
+      } catch (error) {
+        console.error("✗ Fehler beim Senden der Bestätigungs-E-Mail:", error);
+        if (error instanceof Error) {
+          console.error("  Fehlermeldung:", error.message);
+          console.error("  Stack:", error.stack);
+        }
+        // Fehler wird geloggt, aber Mandat wurde bereits erstellt
+      }
+    }
 
     // Benachrichtigung an Kanzlei
-    sendKanzleiNotification({
-      ...emailData,
-      telefon: mandate.telefon || undefined,
-      adresse: mandate.adresse,
-      plz: mandate.plz,
-      wohnort: mandate.wohnort,
-      geburtsdatum: mandate.geburtsdatum.toLocaleDateString("de-DE"),
-      instagramAccountDatum: mandate.instagramAccountDatum
-        ? mandate.instagramAccountDatum.toLocaleDateString("de-DE")
-        : undefined,
-      facebookAccountDatum: mandate.facebookAccountDatum
-        ? mandate.facebookAccountDatum.toLocaleDateString("de-DE")
-        : undefined,
-    }).catch((error) => {
-      console.error("Fehler beim Senden der Kanzlei-Benachrichtigung:", error);
-    });
+    if (!process.env.RESEND_API_KEY) {
+      console.warn("RESEND_API_KEY ist nicht gesetzt - Kanzlei-Benachrichtigung wird übersprungen");
+    } else {
+      try {
+        await sendKanzleiNotification({
+          ...emailData,
+          telefon: mandate.telefon || undefined,
+          adresse: mandate.adresse,
+          plz: mandate.plz,
+          wohnort: mandate.wohnort,
+          geburtsdatum: mandate.geburtsdatum.toLocaleDateString("de-DE"),
+          instagramAccountDatum: mandate.instagramAccountDatum
+            ? mandate.instagramAccountDatum.toLocaleDateString("de-DE")
+            : undefined,
+          facebookAccountDatum: mandate.facebookAccountDatum
+            ? mandate.facebookAccountDatum.toLocaleDateString("de-DE")
+            : undefined,
+        });
+        console.log(`✓ Kanzlei-Benachrichtigung erfolgreich gesendet`);
+      } catch (error) {
+        console.error("✗ Fehler beim Senden der Kanzlei-Benachrichtigung:", error);
+        if (error instanceof Error) {
+          console.error("  Fehlermeldung:", error.message);
+        }
+        // Fehler wird geloggt, aber Mandat wurde bereits erstellt
+      }
+    }
 
     return NextResponse.json(
       {

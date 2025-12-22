@@ -2,7 +2,8 @@ import { Resend } from "resend";
 import fs from "fs";
 import path from "path";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
+const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null;
 
 /**
  * Lädt PDF-Dateien aus dem public Ordner und konvertiert sie zu Base64 für E-Mail-Anhänge
@@ -53,6 +54,10 @@ interface MandateEmailData {
 }
 
 export async function sendConfirmationEmail(data: MandateEmailData) {
+  if (!RESEND_API_KEY || !resend) {
+    throw new Error("RESEND_API_KEY ist nicht gesetzt - E-Mail kann nicht gesendet werden");
+  }
+
   try {
     // PDF-Anhänge laden
     const attachments = getPdfAttachments();
@@ -62,7 +67,7 @@ export async function sendConfirmationEmail(data: MandateEmailData) {
     console.log("  - E-Mail:", data.email);
     console.log("  - PandaDoc Signing URL:", data.pandadocSigningUrl || "NICHT GESETZT");
 
-    await resend.emails.send({
+    const result = await resend.emails.send({
       from: "META Datenschutzklage <noreply@meta-datenschutzklage.de>",
       to: data.email,
       subject: "Bestätigung Deiner Einsendung - META Datenschutzklage",
@@ -128,16 +133,26 @@ export async function sendConfirmationEmail(data: MandateEmailData) {
         </html>
       `,
     });
+
+    if (result.error) {
+      throw new Error(`Resend API Fehler: ${JSON.stringify(result.error)}`);
+    }
+
+    console.log(`✓ Bestätigungs-E-Mail erfolgreich gesendet an ${data.email}`);
     return { success: true };
   } catch (error) {
     console.error("Fehler beim Senden der Bestätigungs-E-Mail:", error);
-    return { success: false, error };
+    throw error; // Fehler weiterwerfen, damit er in der API-Route behandelt werden kann
   }
 }
 
 export async function sendPartnerMagicLink(email: string, magicLink: string, partnerName: string) {
+  if (!RESEND_API_KEY || !resend) {
+    throw new Error("RESEND_API_KEY ist nicht gesetzt - E-Mail kann nicht gesendet werden");
+  }
+
   try {
-    await resend.emails.send({
+    const result = await resend.emails.send({
       from: "META Datenschutzklage <noreply@meta-datenschutzklage.de>",
       to: email,
       subject: "Dein Login-Link für das Partner-Dashboard",
@@ -191,10 +206,15 @@ export async function sendPartnerMagicLink(email: string, magicLink: string, par
         </html>
       `,
     });
+
+    if (result.error) {
+      throw new Error(`Resend API Fehler: ${JSON.stringify(result.error)}`);
+    }
+
     return { success: true };
   } catch (error) {
     console.error("Fehler beim Senden des Magic Link:", error);
-    return { success: false, error };
+    throw error;
   }
 }
 
@@ -207,8 +227,16 @@ export async function sendKanzleiNotification(data: MandateEmailData & {
   instagramAccountDatum?: string;
   facebookAccountDatum?: string;
 }) {
+  if (!RESEND_API_KEY || !resend) {
+    throw new Error("RESEND_API_KEY ist nicht gesetzt - E-Mail kann nicht gesendet werden");
+  }
+
+  if (!process.env.KANZLEI_EMAIL) {
+    throw new Error("KANZLEI_EMAIL ist nicht gesetzt - Kanzlei-Benachrichtigung kann nicht gesendet werden");
+  }
+
   try {
-    await resend.emails.send({
+    const result = await resend.emails.send({
       from: "META Datenschutzklage <noreply@meta-datenschutzklage.de>",
       to: process.env.KANZLEI_EMAIL!,
       subject: `Neues Mandat: ${data.vorname} ${data.nachname}`,
@@ -248,10 +276,15 @@ export async function sendKanzleiNotification(data: MandateEmailData & {
         </html>
       `,
     });
+
+    if (result.error) {
+      throw new Error(`Resend API Fehler: ${JSON.stringify(result.error)}`);
+    }
+
     return { success: true };
   } catch (error) {
     console.error("Fehler beim Senden der Kanzlei-Benachrichtigung:", error);
-    return { success: false, error };
+    throw error;
   }
 }
 
